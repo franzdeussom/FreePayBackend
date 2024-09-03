@@ -18,6 +18,8 @@ class User {
     Role,
     ID_Parrain,
     code_parrainage,
+    new_notif,
+    derniere_connexion,
   ) {
     this.ID_Utilisateur = ID_Utilisateur;
     this.Nom_Utilisateur = Nom_Utilisateur;
@@ -31,6 +33,8 @@ class User {
     this.Role = Role;
     this.ID_Parrain = ID_Parrain;
     this.code_parrainage = code_parrainage;
+    this.new_notif = new_notif;
+    this.derniere_connexion = derniere_connexion
   }
 
   // Méthodes d'instance
@@ -151,7 +155,9 @@ static async findByCodeParrainage(codeParrainage) {
           rows[0].solde_commsion,
           rows[0].Role,
           rows[0].ID_Parrain,
-          rows[0].code_parrainage
+          rows[0].code_parrainage,
+          rows[0].new_notif == 0 ? false:true,
+          rows[0].derniere_connexion
         );
       } else {
         return null; // Renvoie null si non trouvé
@@ -182,7 +188,9 @@ static async findByCodeParrainage(codeParrainage) {
           rows[0].solde_commsion,
           rows[0].Role,
           rows[0].ID_Parrain,
-          rows[0].code_parrainage
+          rows[0].code_parrainage,
+          rows[0].new_notif == 0 ? false:true,
+          rows[0].derniere_connexion
         );
       } else {
         return []; // Renvoie null si non trouvé
@@ -193,37 +201,65 @@ static async findByCodeParrainage(codeParrainage) {
     }
   }
 
-  static async findByResetPasswordToken(ResetPasswordToken)  {
-    try {
-      const [rows] = await db.query(
-        'SELECT * FROM utilisateurs WHERE ResetPasswordToken = ?',
-        [ResetPasswordToken]
-      );
-      if (rows.length > 0) {
-        // Créer un nouvel objet User à partir des données de la base de données
-        return new User(
-          rows[0].ID_Utilisateur,
-          rows[0].Nom_Utilisateur,
-          rows[0].Prenom_Utilisateur,
-          rows[0].Date_Naissance,
-          rows[0].Email,
-          rows[0].Telephone,
-          rows[0].Mot_De_Passe,
-          rows[0].Solde_courant,
-          rows[0].solde_commsion,
-          rows[0].Role,
-          rows[0].ID_Parrain,
-          rows[0].code_parrainage
-        );
-      } else {
-        return null; // Renvoie null si non trouvé
-      }
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+  static async all(){
+    const [rows] = await db.promise().query(
+      'SELECT * FROM utilisateurs ORDER BY Nom_Utilisateur ASC'
+    );
+    
+    return rows.length > 0 ? rows:[];
+  }
+  
+  static async updateLastConnexionDate(date, idUser){
+      const [rows] = await db.promise().query(
+        'UPDATE utilisateurs SET derniere_connexion = ? WHERE ID_Utilisateur = ?',
+        [date, idUser]
+      ) 
+      return rows.affectedRows ==1;
   }
 
+ static async updateUserSolde(iduser, solde){
+      const [rows] = await db.promise().query(
+        'UPDATE utilisateurs SET Solde_courant = ? WHERE ID_utilisateur = ?',
+        [solde, iduser]
+      );
+
+      return rows.affectedRows == 1 ? true:false; 
+  }
+
+  static async updateUserSoldeReduice(iduser, amountToReduice){
+    const [rows] = await db.promise().query(
+      'UPDATE utilisateurs SET Solde_courant = Sole_courant - ? WHERE ID_utilisateur = ?',
+      [amountToReduice, iduser]
+    );
+
+    return rows.affectedRows == 1 ? true:false; 
+  }
+
+  static async updateUser(userData){
+      const [rows] = await db.promise().query(
+        'UDPATE utilisateurs SET Nom_Utilisateur = ? SET Prenom_Utilisateur = ? SET Email = ? SET Telephone = ? WHERE ID_Utilisateur = ?',
+        [user.Nom_Utilisateur, user.Prenom_Utilisateur, user.Email, user.Telephone, user.ID_Utilisateur]
+      );
+
+      return rows.affectedRows == 1 ? [{done : true, data : userData}]:[];
+  }
+
+  static async setNewNotif(id_user){
+    let val = 1;
+      const [rows] = await db.promise().query(
+        'UPDATE utilisateurs SET newNotif = ? WHERE ID_Utilisateur = ?',
+        [val, id_user]
+      );
+
+      return rows.affectedRows == 1;
+  }
+
+  //admin Endpoint
+  static async getUserTransaction(){
+    const [result] = await db.promise().query(
+      'SELECT'
+    )
+  }
 
   static async generateRandomCode(length) {
     const characters = '0123456789';
@@ -233,6 +269,8 @@ static async findByCodeParrainage(codeParrainage) {
     }
     return code;
   }
+
+  
 }
 
 module.exports = User;
