@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
-const routes = require('../routes/users')
+const routesUser = require('../routes/users')
+const routesAdmin = require('../routes/admin')
+
 const db = require('./db');
 const denv = require('dotenv');
 
@@ -15,7 +17,9 @@ denv.config();
 
 const PORT = 3000;
 
-app.use('/api', routes);
+app.use('/api', routesUser); //user's route
+app.use('/api/admin', routesAdmin);
+
 
 app.listen(PORT, ()=> {
     console.log('Serveur ecoute sur le port ' + PORT);
