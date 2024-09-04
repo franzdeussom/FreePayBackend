@@ -20,11 +20,11 @@ class Notification{
 
     static async send(notification){
         const [rows] = await db.promise().query(
-            'INSERT INTO notifications (Date_Notification, Type_Notification, Contenu,ID_Utilisateur, Lues) VALUES(?,?,?,?)',
+            'INSERT INTO notifications (Date_Notification, Type_Notification, Contenu,ID_Utilisateur, Lues) VALUES(?,?,?,?,?)',
             [notification.Date_Notification, notification.Type_Notification, notification.Contenu, notification.ID_Utilisateur, notification.Lues]
         )
-        notification.ID_Notification = rows.affetedRows == 1 ? rows.insertId : null;
-        return rows.affetedRows == 1 ? {notificationData: rows }:[];
+        notification.ID_Notification = rows.affectedRows == 1 ? rows.insertId : null;
+        return rows.affectedRows == 1 ?  [notification]:[];
     }
 
     static async getUserNotif(id){
@@ -42,7 +42,7 @@ class Notification{
                 [id]
             )
 
-            return rows.affetedRows == 1 ? [{isDone : true}]:null;
+            return rows.affectedRows == 1 ? [{isDone : true}]:null;
     }
 
     static async deleteAllUserNotif(id_user){
@@ -51,7 +51,7 @@ class Notification{
                 [id_user]
             )
 
-            return rows.affetedRows == 1 ? [{isDone : true}]:null;
+            return rows.affectedRows == 1 ? [{isDone : true}]:null;
     }
 }
 

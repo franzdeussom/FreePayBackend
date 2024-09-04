@@ -13,9 +13,9 @@ const SouscriptionController = {
                     return res.status(400).json({ errors: errors.array()});
                 }
 
-                const { id_utilisateur, id_pack, montant_investi, id_parrainUtilisateur, commissionParrain, Type_Transaction } = req.body;
+                const { id_utilisateur, id_pack, montant_investi, id_parrainUtilisateur, commissionParrain, Type_Transaction, Duree_Pack } = req.body;
 
-                const result = await Souscription.doSouscription({ID_utilisateur: ID_utilisateur, ID_Pack: ID_Pack, date_souscription: helpers.getCurrentFormatedDate(), montant_investi: montant_investi, Status: "En Cours" })
+                const result = await Souscription.doSouscription({id_utilisateur: id_utilisateur, id_pack: id_pack, date_souscription: helpers.getCurrentFormatedDate(), montant_investi: montant_investi, Status: "En Cours" })
                 var resultComission;
 
                 if(id_parrainUtilisateur && commissionParrain){
@@ -50,10 +50,19 @@ const SouscriptionController = {
 
                 if(notificationSending){
                     //mettre a jour l'attribu dans le champs du user pour prevenir l'user d'une nouvelle notif a la prochaine connexion
-                    const prevenirUser = await User.setNewNotif(id_utilisateur);
+                    const prevenirUser = await User.setNewNotif(id_utilisateur, 1);
                 }
                 
-                return result ? res.status(200).json([{insertID: result, resultComission: resultComission, transactionData: transactionResult.transactionData }]): res.send([]);
+                return result ? res.status(200).json(
+                                                    [
+                                                        {
+                                                            insertID: result,
+                                                            expiredIn: helpers.getRestantDayOfPack(helpers.getCurrentFormatedDate(), Duree_Pack).jourRestants, 
+                                                            resultComission: resultComission, 
+                                                            transactionData: transactionResult.transactionData, 
+                                                            notifData: notificationSending
+                                                        }
+                                                    ]): res.send([]);
 
             } catch (error) {
                 console.error(error);

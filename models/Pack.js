@@ -10,7 +10,7 @@ class Pack{
         Montant_Minimal,
         Taux_Rendement,
         commission_parrain,
-        Durée_Pack,
+        Duree_Pack,
         Conditions,
         expiredIn,
         JoursRestant
@@ -21,7 +21,7 @@ class Pack{
         this.Montant_Minimal = Montant_Minimal;
         this.Taux_Rendement = Taux_Rendement;
         this.commission_parrain = commission_parrain;
-        this.Durée_pack = Durée_Pack;
+        this.Duree_pack = Duree_Pack;
         this.Conditions = Conditions;
         this.expiredIn = expiredIn;
         this.JoursRestant = JoursRestant;
@@ -92,6 +92,16 @@ class Pack{
         )
 
         return rows.affectedRows == 1;
+    }
+
+    static async update(pack){
+            const [rows] = await db.promise().query(
+                'UPDATE packs SET Nom_Pack = ?, Description = ?, Montant_Minimal = ?, Taux_Rendement = ?, commission_parrain = ?, Duree_Pack = ?, Conditions = ? WHERE ID_Pack = ?',
+                [pack.Nom_Pack, pack.Description, pack.Montant_Minimal, pack.Taux_Rendement, pack.commission_parrain, pack.Duree_Pack, pack.Conditions, pack.ID_Pack]
+
+            )
+
+            return rows.affectedRows == 1;
     }
 
 

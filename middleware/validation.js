@@ -19,6 +19,19 @@ exports.createPacksValidationRules = () =>{
     ]
 }
 
+exports.UpdatePacksValidationRules = () =>{
+  return[
+    check('ID_Pack').notEmpty().withMessage('l ID du pack doit etre défini!'),
+    check('Nom_Pack').notEmpty().withMessage('le Nom du pack doit etre défini!'),
+    check('Description').notEmpty().withMessage('la Description du pack doit etre défini!'),
+    check('Montant_Minimal').notEmpty().withMessage('le Montant Minimal du pack doit etre défini!'),
+    check('Taux_Rendement').notEmpty().withMessage('le Taux de Rendement du pack doit etre défini!'),
+    check('commission_parrain').notEmpty().withMessage('la commission du parrain du pack doit etre défini!'),
+    check('Duree_Pack').notEmpty().withMessage('la Durée du pack doit etre défini!')   
+  ]
+}
+
+
 exports.saveSouscriptionValidationnRules = () =>{
   return [
     check('id_utilisateur').notEmpty().withMessage('le user doit etre identifié pour continuer!'),
@@ -37,11 +50,15 @@ exports.transactionValidationRules = ()=>{
 
 exports.updateValidationRules = ()=>{
       return [
-        check('ID_Utilisateur').notEmpty().withMessage("ID introuvable"),
-        check('Nom_Utilisateur').notEmpty().withMessage("Nom d'utilisateur attendu"),
-        check('Email').notEmpty().withMessage('Email Obligatoire !'),
-        check('Telephone').notEmpty().withMessage('Telephone requis!'),
-        check("Prenom_Utilisateur").notEmpty().withMessage('Prenom Obligatoire')
+        check('ID_Pack').notEmpty().withMessage("ID introuvable"),
+        check('Nom_Pack').notEmpty().withMessage("Nom d'utilisateur attendu"),
+        check('Description').notEmpty().withMessage('Email Obligatoire !'),
+        check('Montant_Minimal').notEmpty().withMessage('Telephone requis!'),
+        check("Taux_Rendement").notEmpty().withMessage('Prenom Obligatoire'),
+        check('Duree_Pack').notEmpty().withMessage('Telephone requis!'),
+        check('Conditions').notEmpty().withMessage('Telephone requis!')
+        
+      
       ]
 }
 
@@ -51,5 +68,14 @@ exports.notificationValidationRules = ()=>{
       check('Contenu').notEmpty().withMessage("Aucun Contenu defini"),
       check('Type_Notification').notEmpty().withMessage("Type de notification doit etre defini"),
 
+    ]
+}
+
+exports.updateRetraitState = ()=>{
+    return [
+      check('idTransaction').notEmpty().withMessage('ID non défini'),
+      check('status').notEmpty().withMessage('status non défini'),
+      check('idUser').notEmpty().withMessage('id U non défini'),
+      check('montant').notEmpty().withMessage('montant non défini'),
     ]
 }

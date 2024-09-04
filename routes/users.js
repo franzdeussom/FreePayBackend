@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const packController = require('../controllers/packController');
 const notifController = require('../controllers/notificationController');
+const transaction = require('../controllers/transactionController');
 const souscriptionController = require('../controllers/sosucriptionController');
 const authMiddleware = require('../middleware/authMiddleware');
 const { validationResult } = require('express-validator');
@@ -20,14 +21,19 @@ router.put('/users', authMiddleware, updateValidationRules(), userController.upd
 
 router.get('/pack/', authMiddleware, packController.getAllPack);
 
-router.post('/souscription', authMiddleware, saveSouscriptionValidationnRules(), souscriptionController.save);
 
 router.post('/password-reset/', changePassewordValidationRules(), userController.changePassword);
+
+router.post('/souscription', authMiddleware, saveSouscriptionValidationnRules(), souscriptionController.save);
 
 router.get('/notification/:id', authMiddleware, notifController.getUserNotification);
 
 router.delete('/notification-unique/:id', authMiddleware, notifController.deleteNotif);
 
 router.delete('/notification-all/:id', authMiddleware, notifController.deleteAllNotif);
+
+router.get('/notifications-read/:id/', authMiddleware, notifController.updateNotifValue);
+
+router.get('/retrait-options', authMiddleware, transaction.getTransactionOptiion);
 
 module.exports = router;

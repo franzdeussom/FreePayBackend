@@ -51,6 +51,36 @@ const PackController = {
         const result = await Pack.deletePack(idPack);
         return result ? res.status(200).json([{isDone: result}]):res.send([]);
 
+      },
+
+      async update(req, res){
+            try {
+
+              const errors = validationResult(req);
+
+              if (!errors.isEmpty()) {
+
+                return res.status(400).json({ errors: errors.array()});
+              }
+
+              const { ID_Pack, Nom_Pack, Description, Montant_Minimal, Taux_Rendement, commission_parrain, Duree_Pack, Conditions } = req.body;
+
+              const result = await Pack.update({
+                              Nom_Pack: Nom_Pack,
+                              ID_Pack: ID_Pack,
+                              Description: Description,
+                              Montant_Minimal: Montant_Minimal,
+                              Taux_Rendement: Taux_Rendement,
+                              commission_parrain: commission_parrain,
+                              Duree_Pack: Duree_Pack,
+                              Conditions: Conditions
+              });
+
+              return result ? res.status(200).json([{isDone: result}]): res.send([]);
+              
+            } catch (error) {
+              return res.status(400).send({error: "Erreur lors de la création!"});  
+            }
       }
 }
 

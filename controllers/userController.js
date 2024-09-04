@@ -124,7 +124,7 @@ const Souscription = require("../models/Souscription");
                                                Telephone: Telephone,
                                                ID_Utilisateur: ID_Utilisateur
                                               });
-               return res.json(result);                                
+               return result ? res.status(200).json([{IsDone: true }]): res.send([]);                                
           } catch (error) {
               console.log(error);
               return res.status(400).send({error: "erreur lors de l'execution  de la mise à jour !"})

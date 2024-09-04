@@ -228,26 +228,24 @@ static async findByCodeParrainage(codeParrainage) {
 
   static async updateUserSoldeReduice(iduser, amountToReduice){
     const [rows] = await db.promise().query(
-      'UPDATE utilisateurs SET Solde_courant = Sole_courant - ? WHERE ID_utilisateur = ?',
+      'UPDATE utilisateurs SET Solde_courant = Solde_courant - ? WHERE ID_utilisateur = ?',
       [amountToReduice, iduser]
     );
 
     return rows.affectedRows == 1 ? true:false; 
   }
 
-  static async updateUser(userData){
+  static async updateUser(user){
       const [rows] = await db.promise().query(
-        'UDPATE utilisateurs SET Nom_Utilisateur = ? SET Prenom_Utilisateur = ? SET Email = ? SET Telephone = ? WHERE ID_Utilisateur = ?',
+        'UPDATE utilisateurs SET Nom_Utilisateur = ?, Prenom_Utilisateur = ?, Email = ?, Telephone = ? WHERE ID_Utilisateur = ?',
         [user.Nom_Utilisateur, user.Prenom_Utilisateur, user.Email, user.Telephone, user.ID_Utilisateur]
       );
-
-      return rows.affectedRows == 1 ? [{done : true, data : userData}]:[];
+      return rows.affectedRows == 1;
   }
 
-  static async setNewNotif(id_user){
-    let val = 1;
+  static async setNewNotif(id_user, val){
       const [rows] = await db.promise().query(
-        'UPDATE utilisateurs SET newNotif = ? WHERE ID_Utilisateur = ?',
+        'UPDATE utilisateurs SET new_notif = ? WHERE ID_Utilisateur = ?',
         [val, id_user]
       );
 
