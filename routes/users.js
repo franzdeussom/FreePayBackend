@@ -35,5 +35,5 @@ router.delete('/notification-all/:id', authMiddleware, notifController.deleteAll
 router.get('/notifications-read/:id/', authMiddleware, notifController.updateNotifValue);
 
 router.get('/retrait-options', authMiddleware, transaction.getTransactionOptiion);
-
+router.get('/wocoin', authMiddleware, userController.wocoin);
 module.exports = router;

@@ -99,6 +99,22 @@ const Souscription = require("../models/Souscription");
         
     },
 
+    async delete(req, res){
+          try {
+              const id = req.params.id;
+              if(!id){
+                  return res.status(400).send(['bad request']);
+              }
+
+              const result = await User.delete(id);
+              return  result ? res.status(200).json([{isDone: result}]): res.send([]);
+              
+          } catch (error) {
+              console.log(error);
+              return res.status(400).send([{error: "erreur lors de l'execution  de suppression!"}]);
+          }
+    },
+
     async getAllUser(req, res){
         try {
           const user = await User.all();
@@ -139,6 +155,13 @@ const Souscription = require("../models/Souscription");
                                       transactionList: await Transaction.listUserTransaction(id), 
                                       souscriptionList: await Souscription.getUserSouscription(id) 
                                     }]);
+    },
+
+    async wocoin(req, res){
+      const option = {
+            text: "Comming Soon! 2025 🤫"
+      }
+      return res.status(200).json([option]);
     }
 }
 

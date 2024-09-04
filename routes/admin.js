@@ -14,12 +14,13 @@ router.post('/pack/', authToken, createPacksValidationRules(), packController.cr
 router.put('/pack', authToken, updateValidationRules(), packController.update);
 
 router.delete('/pack/:id',authToken, packController.deletePack);
+router.delete('/users/:id', authToken, userController.delete);
 router.get('/users', authToken, userController.getAllUser);
 router.post('/notification', authToken, notificationValidationRules(), NotificationController.send)
 router.get('/transaction-souscription/:id', authToken, userController.userTransactionAndSouscription);
 
 router.put('/transaction-state', authToken, updateRetraitState(), transactionController.updateRetraitState);
 router.get('/transaction-total', authToken, transactionController.getTotalAmount);
-router.get('transaction-request', authToken, transactionController.getRetraitRequest);
+router.get('/transaction-request', authToken, transactionController.getRetraitRequest);
 
 module.exports = router;

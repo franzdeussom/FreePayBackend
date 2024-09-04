@@ -168,37 +168,13 @@ static async findByCodeParrainage(codeParrainage) {
     }
   }
 
-  static async findById(id) {
-    try {
-      const [rows] = await db.query(
-        'SELECT * FROM utilisateurs WHERE ID_Utilisateur = ?',
+  static async delete(id){
+      const [rows] = await db.promise().query(
+        'DELETE FROM utilisateurs WHERE ID_Utilisateur = ? ',
         [id]
-      );
-      if (rows.length > 0) {
-        // Créer un nouvel objet User à partir des données de la base de données
-        return new User(
-          rows[0].ID_Utilisateur,
-          rows[0].Nom_Utilisateur,
-          rows[0].Prenom_Utilisateur,
-          rows[0].Date_Naissance,
-          rows[0].Email,
-          rows[0].Telephone,
-          rows[0].Mot_De_Passe,
-          rows[0].Solde_courant,
-          rows[0].solde_commsion,
-          rows[0].Role,
-          rows[0].ID_Parrain,
-          rows[0].code_parrainage,
-          rows[0].new_notif == 0 ? false:true,
-          rows[0].derniere_connexion
-        );
-      } else {
-        return []; // Renvoie null si non trouvé
-      }
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+      )
+
+      return rows.affectedRows == 1;
   }
 
   static async all(){
