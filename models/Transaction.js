@@ -98,6 +98,22 @@ class Transaction{
             return rows.affectedRows == 1 ? true:false;
      }
 
+     static async updateRetratState(id, value, id_user, montant){
+        const [rows] = await db.promise().query(
+            'UPDATE transactions SET Statut_Transaction = ? WHERE ID_Transaction = ?',
+            ['Echec', id]
+        )
+        const notifiResult = await Notification.send({ 
+                        ID_Utilisateur : id_user,
+                        Date_Transaction: helpers.getCurrentFormatedDate(),
+                        Type_Notification: "Retrait",
+                        Contenu: "Votre demande de retrait à été approuvé et vos fonds ont été transféré à votre numero de Telephone d'inscription. Montant : " + montant + ' XAF',
+                        Lues: null
+        });
+
+        return rows.affectedRows == 1 ? true:false;
+     }
+
 }
 
 module.exports = Transaction;

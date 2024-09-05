@@ -6,6 +6,7 @@ const notifController = require('../controllers/notificationController');
 const transaction = require('../controllers/transactionController');
 const souscriptionController = require('../controllers/sosucriptionController');
 const authMiddleware = require('../middleware/authMiddleware');
+const publicationController = require('../controllers/publicationController');
 const { validationResult } = require('express-validator');
 const { changePassewordValidationRules, saveSouscriptionValidationnRules, updateValidationRules } = require('../middleware/validation'); // Importe les règles
 
@@ -34,6 +35,11 @@ router.delete('/notification-all/:id', authMiddleware, notifController.deleteAll
 
 router.get('/notifications-read/:id/', authMiddleware, notifController.updateNotifValue);
 
+router.delete('/users/:id', authMiddleware, userController.delete);
+
+router.get('/publication', authMiddleware, publicationController.getAllPub);
+
 router.get('/retrait-options', authMiddleware, transaction.getTransactionOptiion);
+
 router.get('/wocoin', authMiddleware, userController.wocoin);
 module.exports = router;

@@ -79,3 +79,15 @@ exports.updateRetraitState = ()=>{
       check('montant').notEmpty().withMessage('montant non défini'),
     ]
 }
+
+exports.createPublicationValidationRules = () =>{
+  return [
+    check('contenu').notEmpty().withMessage("Contenu obligatoire !"),
+    check('nom').notEmpty().withMessage("Le nom de la publication est Obligatoire !"),
+    check('prenom').notEmpty().withMessage('Le prenom est Obligatoire'),
+    check('nbrCommentaire').notEmpty().withMessage('Le nombre de commentaire est Obligatoire'),
+    check('nbrLike').notEmpty().withMessage('Le nombre de like de la pub est Obligatoire'),
+    check('bgcolor').notEmpty().withMessage('La couleur dAP de la pub est Obligatoire'),
+    check('id_admin').notEmpty().withMessage('ID admin de la pub est Obligatoire'),
+  ]
+}

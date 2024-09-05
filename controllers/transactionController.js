@@ -1,6 +1,8 @@
 const {validationResult} = require('express-validator');
 const Transaction = require('../models/Transaction');
 const helepers = require('../helpers/helpers');
+const User = require('../models/User');
+
 
 const TransactionController = {
     async save (req, res){
@@ -65,7 +67,10 @@ const TransactionController = {
                 return res.status(400).json([{message: "ID non defini"}]);
              } 
              const result = await Transaction.updateRetraitState(idTransaction, status, idUser, montant);
-             
+             if(result){
+                isPreventionSend = await User.setNewNotif(idUser, 1);
+            }
+
              return  result ? res.status(200).json([{isDone: result}]): res.send([]);
 
         } catch (error) {
@@ -94,6 +99,25 @@ const TransactionController = {
         }
 
         return res.status(200).json([{options: options}]);
+    },
+
+    async echecsTransact(req, res){
+        try {
+            const {idTransaction, status, idUser, montant} = req.body;
+             if(!idTransaction){
+                return res.status(400).json([{message: "ID non defini"}]);
+             } 
+            
+             const result = await Transaction.updateRetratState(idTransaction, status, idUser, montant);
+             if(result){
+                isPreventionSend = await User.setNewNotif(idUser, 1);
+            }
+
+             return  result ? res.status(200).json([{isDone: result}]): res.send([]);
+        } catch (error) {
+            console.log(error);
+            return res.status(400).json([{message: error.message}]);
+        }
     }
 }
 
