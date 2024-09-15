@@ -5,7 +5,7 @@ const transactionController = require('../controllers/transactionController');
 const NotificationController = require('../controllers/notificationController');
 const publicationController = require('../controllers/publicationController');
 
-const { createPacksValidationRules, createPublicationValidationRules , updateRetraitState, notificationValidationRules, updateValidationRules, transactionValidationRules} = require('../middleware/validation'); // Importe les règles
+const { createPacksValidationRules, updateDepotState, createPublicationValidationRules , updateRetraitState, notificationValidationRules, updateValidationRules, transactionValidationRules} = require('../middleware/validation'); // Importe les règles
 const authToken = require('../middleware/authMiddleware');
 const router = express.Router();
 
@@ -28,6 +28,8 @@ router.get('/transaction-souscription/:id', authToken, userController.userTransa
 
 router.post('/transaction-echecs', authToken, transactionController.echecsTransact);
 
+router.post('/transaction-depot-echec', authToken, transactionController.echecDepotTransaction);
+
 router.get('/my-pub/:id', authToken, publicationController.getMyPub);
 
 router.put('/publication', authToken, createPublicationValidationRules(), publicationController.update);
@@ -41,5 +43,12 @@ router.put('/transaction-state', authToken, updateRetraitState(), transactionCon
 router.get('/transaction-total', authToken, transactionController.getTotalAmount);
 
 router.get('/transaction-request', authToken, transactionController.getRetraitRequest);
+
+router.get('/transaction-depot', authToken, transactionController.getDepotRequest);
+
+router.put('/transaction-depot', authToken, updateDepotState(), transactionController.updateDepotState);
+
+router.put('/user-rule/:idadmin', authToken, userController.changeUserRule);
+
 
 module.exports = router;

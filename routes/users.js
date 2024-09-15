@@ -39,7 +39,12 @@ router.delete('/users/:id', authMiddleware, userController.delete);
 
 router.get('/publication', authMiddleware, publicationController.getAllPub);
 
-router.get('/retrait-options', authMiddleware, transaction.getTransactionOptiion);
+router.get('/operation-options', authMiddleware, transaction.getTransactionOptiion);
 
 router.get('/wocoin', authMiddleware, userController.wocoin);
+
+router.post('/transaction-depot', authMiddleware, transaction.save);
+
+router.get('/refresh/:id', authMiddleware, userController.homerefresh);
+
 module.exports = router;

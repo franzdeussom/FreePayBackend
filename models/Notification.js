@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const helpers = require('../helpers/helpers');
 
 
 class Notification{
@@ -21,7 +22,11 @@ class Notification{
     static async send(notification){
         const [rows] = await db.promise().query(
             'INSERT INTO notifications (Date_Notification, Type_Notification, Contenu,ID_Utilisateur, Lues) VALUES(?,?,?,?,?)',
-            [notification.Date_Notification, notification.Type_Notification, notification.Contenu, notification.ID_Utilisateur, notification.Lues]
+            [ helpers.getCurrentFormatedDate(), 
+             notification.Type_Notification, 
+             notification.Contenu, 
+             notification.ID_Utilisateur, 
+             notification.Lues]
         )
         notification.ID_Notification = rows.affectedRows == 1 ? rows.insertId : null;
         return rows.affectedRows == 1 ?  [notification]:[];

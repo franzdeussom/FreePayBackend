@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const Notification = require("./Notification");
 const helpers = require('../helpers/helpers');
+const User = require('./User');
 
 class Transaction{
 
@@ -28,7 +29,7 @@ class Transaction{
 
      static async listUserTransaction(idUser){
             const [rows] = await db.promise().query(
-                'SELECT * FROM transactions WHERE ID_Utilisateur = ?',
+                'SELECT * FROM transactions WHERE ID_Utilisateur = ? ORDER BY ID_Transaction DESC',
                 [idUser]
             );
             return rows.length > 0 ? rows:[];
@@ -49,7 +50,7 @@ class Transaction{
 
      static async isMobileIDTranscationValid(id){
          const [result] = await db.promise().query(
-            'SELECT * FROM transactions WHERE mobileID = ?',
+            'SELECT * FROM transactions WHERE mobileTransactionID = ?',
             [id]
          );
 
@@ -65,10 +66,18 @@ class Transaction{
         return rows.length == 0 ? []:rows;
      }
 
-     static async getAllDepot(){
-        const query = "SELECT SUM(transactions.Montant) as TOTAL FROM transactions WHERE Type_Transaction = 'Dépot'"
+     static async getDepotRequest(){
         const [rows] = await db.promise().query(
-            query
+            "SELECT utilisateurs.ID_Utilisateur, utilisateurs.Nom_Utilisateur, utilisateurs.Prenom_Utilisateur, utilisateurs.Telephone,transactions.ID_Transaction, transactions.Montant, transactions.Date_Transaction, transactions.mobileTransactionID FROM utilisateurs, transactions WHERE transactions.ID_Utilisateur = utilisateurs.ID_Utilisateur AND Statut_Transaction = 'Traitement en cours...'"
+        )
+
+        return rows.length == 0 ? []:rows;
+     }
+
+     static async getAllDepot(){
+        const query = "SELECT SUM(transactions.Montant) as TOTAL FROM transactions WHERE Type_Transaction = 'Dépot' AND Statut_Transaction = ?"
+        const [rows] = await db.promise().query(query,
+            ['Approuvée']
         );
         return rows;
      }
@@ -98,6 +107,25 @@ class Transaction{
             return rows.affectedRows == 1 ? true:false;
      }
 
+     static async updateDepotState(idTransaction, id_user, montant){
+            const value = 'Approuvée';
+            const [rows] = await db.promise().query(
+                'UPDATE transactions SET Statut_Transaction = ?, Montant = ? WHERE ID_Transaction = ?',
+                [value, montant, idTransaction]
+            )
+            const notifiResult = await Notification.send({ 
+                            ID_Utilisateur : id_user,
+                            Date_Transaction: helpers.getCurrentFormatedDate(),
+                            Type_Notification: "Dépot",
+                            Contenu: "Dépot effectué avec succès, Montant : " + montant + ' XAF',
+                            Lues: null
+            });
+
+            const updateSoldeRslt = await User.addSolde(id_user, montant);
+
+            return rows.affectedRows == 1 ;
+     }
+
      static async updateRetratState(id, value, id_user, montant){
         const [rows] = await db.promise().query(
             'UPDATE transactions SET Statut_Transaction = ? WHERE ID_Transaction = ?',
@@ -113,6 +141,24 @@ class Transaction{
 
         return rows.affectedRows == 1 ? true:false;
      }
+
+
+     static async setTransactAsFailed(id, id_user){
+        const [rows] = await db.promise().query(
+            'UPDATE transactions SET Statut_Transaction = ? WHERE ID_Transaction = ?',
+            ['Echec', id]
+        )
+        const notifiResult = await Notification.send({ 
+                        ID_Utilisateur : id_user,
+                        Date_Transaction: helpers.getCurrentFormatedDate(),
+                        Type_Notification: "Dépot",
+                        Contenu: "Echec de Transaction.",
+                        Lues: null
+        });
+
+        return rows.affectedRows == 1 ? true:false;
+     }
+     
 
 }
 

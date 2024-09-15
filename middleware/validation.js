@@ -80,6 +80,15 @@ exports.updateRetraitState = ()=>{
     ]
 }
 
+exports.updateDepotState = ()=>{
+  return [
+    check('idTransaction').notEmpty().withMessage('ID non défini'),
+    check('status').notEmpty().withMessage('status non défini'),
+    check('idUser').notEmpty().withMessage('id U non défini'),
+    check('montant').notEmpty().withMessage('montant non défini'),
+  ]
+}
+
 exports.createPublicationValidationRules = () =>{
   return [
     check('contenu').notEmpty().withMessage("Contenu obligatoire !"),

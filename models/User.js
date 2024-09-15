@@ -202,6 +202,15 @@ static async findByCodeParrainage(codeParrainage) {
       return rows.affectedRows == 1 ? true:false; 
   }
 
+  static async addSolde(iduser, montant){
+    const [rows] = await db.promise().query(
+      'UPDATE utilisateurs SET Solde_courant = Solde_courant + ? WHERE ID_utilisateur = ?',
+      [montant, iduser]
+    );
+
+    return rows.affectedRows == 1 ? true:false; 
+  }
+
   static async updateUserSoldeReduice(iduser, amountToReduice){
     const [rows] = await db.promise().query(
       'UPDATE utilisateurs SET Solde_courant = Solde_courant - ? WHERE ID_utilisateur = ?',
@@ -228,11 +237,23 @@ static async findByCodeParrainage(codeParrainage) {
       return rows.affectedRows == 1;
   }
 
+  static async findByID(id){
+    const [rows] = await db.promise().query(
+      'SELECT * FROM utilisateurs WHERE ID_Utilisateur = ?',
+      [id]
+    );
+
+    return rows.length > 0 ? rows:[];
+  }
+
   //admin Endpoint
-  static async getUserTransaction(){
+  static async changeUserRule(id, role){
     const [result] = await db.promise().query(
-      'SELECT'
-    )
+      'UPDATE utilisateurs SET role = ? WHERE ID_Utilisateur = ?',
+      [role, id]
+    );
+
+    return result.affectedRows == 1;
   }
 
   static async generateRandomCode(length) {

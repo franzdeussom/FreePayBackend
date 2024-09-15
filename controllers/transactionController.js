@@ -5,7 +5,7 @@ const User = require('../models/User');
 
 
 const TransactionController = {
-    async save (req, res){
+    async save(req, res){
         try{
             const errors = validationResult(req);
 
@@ -15,13 +15,14 @@ const TransactionController = {
                 
                 const { Type_Transaction, Montant, ID_Utilisateur, mobileTransactionID } = req.body;
 
-                if(!mobileTransactionID){
-                    return res.status(400).send({message: "Id de transaction mobile est obligatoire."});
-                }
+            
 
                 if(Type_Transaction == "Dépot"){
+                    if(!mobileTransactionID){
+                        return res.status(400).send({message: "Id de transaction mobile est obligatoire."});
+                    }
                     if(!await Transaction.isMobileIDTranscationValid(mobileTransactionID)){
-                        return res.status(400).send({message: "Echec ID Transaction Mobile"});
+                        return res.status(402).send({message: "Echec ID Transaction Mobile"});
                     }
                 }
 
@@ -34,12 +35,25 @@ const TransactionController = {
                         Mode_Paiement: "Porte de feuille Mobile",
                         ID_Pack: null,
                         ID_Utilisateur: ID_Utilisateur,
-                        Status_Transaction: Type_Transaction === "Dépot" ? "Reussi":"Traitement en cours..."
+                        Statut_Transaction: "Traitement en cours..."
                     }, mobileTransactionID)
 
         return res.status(200).json([result]);
 
         }catch(error){
+            console.log(error);
+            return res.status(400).json([{message: error.message}]);
+        }
+    },
+
+    async getDepotRequest(req, res){
+        try {
+
+            const result = await Transaction.getDepotRequest();
+
+            return  res.status(200).json([{depotRequestList: result}]);
+
+        } catch (error) {
             console.log(error);
             return res.status(400).json([{message: error.message}]);
         }
@@ -79,6 +93,26 @@ const TransactionController = {
         }
     },
 
+    async updateDepotState(req, res){
+        //Redefinir le statut des demandes de depot: approuvée
+        try {
+             const {idTransaction, idUser, montant} = req.body;
+             if(!idTransaction){
+                return res.status(400).json([{message: "ID non defini"}]);
+             } 
+             const result = await Transaction.updateDepotState(idTransaction, idUser, montant);
+             if(result){
+                isPreventionSend = await User.setNewNotif(idUser, 1);
+            }
+
+             return  result ? res.status(200).json([{isDone: result}]): res.send([]);
+
+        } catch (error) {
+            console.log(error);
+            return res.status(400).json([{message: error.message}]);
+        }
+    },
+
     async getTotalAmount(req, res){
         //Obtenir les revenue total encaissés
         try {
@@ -94,8 +128,19 @@ const TransactionController = {
 
     async getTransactionOptiion(req, res){
         const options = {
-            min: 4700,
-            Text: "Vos demandes de retraits sont traitées et vous recevrez votre accréditation au plus tard pendant 72h !"
+            retrait: {
+                min: 4700,
+                text: "Vos demandes de retraits sont traitées et vous recevrez votre accréditation au plus tard pendant 72h !"            
+            },
+
+            depot: {
+                    Orange : "Procedure pour depot orange",
+                    MTN : "procedure pour depot MTN",
+                    max : 300000,
+                    pays: "Cameroun",
+                    info: "Executer le code et copier l'ID de la transaction dans le message de confirmation que vous recevez"
+            }
+        
         }
 
         return res.status(200).json([{options: options}]);
@@ -109,6 +154,25 @@ const TransactionController = {
              } 
             
              const result = await Transaction.updateRetratState(idTransaction, status, idUser, montant);
+             if(result){
+                isPreventionSend = await User.setNewNotif(idUser, 1);
+            }
+
+             return  result ? res.status(200).json([{isDone: result}]): res.send([]);
+        } catch (error) {
+            console.log(error);
+            return res.status(400).json([{message: error.message}]);
+        }
+    },
+
+    async echecDepotTransaction(req, res){
+        try {
+            const {idTransaction, idUser} = req.body;
+             if(!idTransaction){
+                return res.status(400).json([{message: "ID non defini"}]);
+             } 
+            
+             const result = await Transaction.setTransactAsFailed(idTransaction, idUser);
              if(result){
                 isPreventionSend = await User.setNewNotif(idUser, 1);
             }

@@ -34,7 +34,7 @@ const Souscription = require("../models/Souscription");
         const token = helpers.generateJWT({userId: user.ID_Utilisateur}, 'FreePay2024', 36000);//generation de son token
 
 
-        const transaction = await Transaction.listUserTransaction(user.ID_Utilisateur, user.Solde_courant);//get all her transactions
+        const transaction = await Transaction.listUserTransaction(user.ID_Utilisateur);//get all her transactions
         const packs = await Pack.userPackList(user.ID_Utilisateur, user.Solde_courant, user.derniere_connexion);
   
         if(tmpUserSolde != packs.soldeUser){
@@ -53,9 +53,16 @@ const Souscription = require("../models/Souscription");
 
     },
 
-    async signup(req, res){
-        const { Nom_Utilisateur, Prenom_Utilisateur, Mot_De_Passe, Date_Naiss, Telephone, Email, code_invitation} = req.body;
-    },
+    async  signup(req, res){
+      try{
+        
+      const resultDataUser = await User.create(req.body);
+      return res.status(201).json({resultDataUser});
+
+    }catch(error){
+      return res.status(400).send({error : 'nous n\'avons pas pu traiter votre requette'});
+    }
+  },
 
     async sendMail(req, res){
       const { email } = req.params;
@@ -149,13 +156,63 @@ const Souscription = require("../models/Souscription");
 
     //(Get) admin endpoint
     async userTransactionAndSouscription(req, res){
+      try {
         const id = req.params.id;
         
         return res.status(200).json([{
                                       transactionList: await Transaction.listUserTransaction(id), 
                                       souscriptionList: await Souscription.getUserSouscription(id) 
                                     }]);
+        
+      } catch (error) {
+          return res.status(400).send({error: "erreur lors de l'execution  !"})
+      }
+        
     },
+
+    async changeUserRule(req, res){
+        try {
+            const {id, role} = req.body;
+            const idadmin = req.params.idadmin;
+
+            if(idadmin != 1){
+              return res.status(400).send({message: "Erreur lors du traitement de données!"});                
+            }
+
+            if(!id && !role){
+              return res.status(400).send({message: "Erreur lors du traitement de données!"});                
+            }
+
+            const isDone = await User.changeUserRule(id, role);
+
+            return isDone ? res.status(200).json([{isDone: isDone}]):res.send([]);
+
+        } catch (error) {
+          return res.status(400).send({error: "erreur lors de l'execution  de la mise à jour !"})
+          
+        }
+    },
+
+
+    async homerefresh(req, res){
+        try {
+            const idUser = req.params.id;
+
+            if(!idUser){
+                return res.status(400).send({error: " lors de l'execution d'actualisation !"})
+            }
+         
+         const user = await User.findByID(idUser);
+         const transaction = await Transaction.listUserTransaction(idUser);//get all her transactions
+
+          return res.json([{data: user, transaction: transaction}]);
+
+        } catch (error) {
+          console.log(error);
+          return res.status(400).send({error: "erreur lors de l'execution d'actualisation !"})
+        }
+    },
+
 
     async wocoin(req, res){
       const option = {

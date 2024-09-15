@@ -4,6 +4,7 @@ const helpers = require('../helpers/helpers');
 const User = require('../models/User');
 
 const NotificationController = {
+    
    async send(req, res){
         try {
             const errors = validationResult(req);

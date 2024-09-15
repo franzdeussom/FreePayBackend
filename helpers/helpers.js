@@ -72,14 +72,23 @@ exports.getDateSplited = (date)=>{
         if(derniere_connexion != this.getCurrentFormatedDate()){
 
             if(checkDateResult.isStillValid){
+                const jourSansConnexion = this.getRestantDayOfPack(derniere_connexion, 0).jourRestants; //nombre de jour que l'utilisateur a fait sans se connecter
+                
+                if( jourSansConnexion > 0 ){
+                    //au
+                    const dailyGain = ((prix * Taux_Rendement) / 100) * jourSansConnexion;
+
+                    return  {newSole: Number.parseFloat(soldeUser)+dailyGain, expireIn: checkDateResult.jourRestants, isStillValid: checkDateResult.isStillValid};
+                }
+                
                 const dailyGain = ((prix * Taux_Rendement) / 100);
                 
     
-                let gain  = 0;
+              /*  let gain  = 0;
                 for (let index = 0; index <= (Math.abs(duree - checkDateResult.jourRestants)); index++) {
                    gain = gain + dailyGain;  
-                }
-                return  {newSole: Number.parseFloat(soldeUser)+gain, expireIn: checkDateResult.jourRestants, isStillValid: checkDateResult.isStillValid};
+                }*/
+                return  {newSole: Number.parseFloat(soldeUser)+dailyGain, expireIn: checkDateResult.jourRestants, isStillValid: checkDateResult.isStillValid};
             }    
         }
        
