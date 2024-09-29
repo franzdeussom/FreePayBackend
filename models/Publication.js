@@ -37,12 +37,12 @@ class Publication{
 
     static async update(publication){
             const [rows] = await db.promise().query(
-                'UPDATE publications SET datePublication = ?, contenu = ?, bgColor = ?, nom = ?, prenom = ?, nbrCommentaire = ?, nbrLike ?, profilUrl = ? WHERE id_admin = ? AND id = ?',
-                [publication.datePublication, publication.contenu, publication.bgcolor, publication.nbrCommentaire, publication.nbrLike, publication.profilUrl, publication.id_admin, publication.id]
+                'UPDATE publications SET datePublication = ?, contenu = ?, bgColor = ?, nom = ?, prenom = ?, nbrCommentaire = ?, nbrLike = ?, profilUrl = ? WHERE id_admin = ? AND id = ?',
+                [publication.datePublication, publication.contenu, publication.bgcolor,publication.nom, publication.prenom, publication.nbrCommentaire, publication.nbrLike, publication.profilUrl, publication.id_admin, publication.id]
 
             )
 
-            return rows.affectedRows == 1 ? [{isDone: true}]:[];
+            return rows.affectedRows == 1 ? [{isDone: true, datePublication: publication.datePublication}]:[];
     }
 
     static async delete(id){

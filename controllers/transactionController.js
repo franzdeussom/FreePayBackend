@@ -25,7 +25,10 @@ const TransactionController = {
                         return res.status(402).send({message: "Echec ID Transaction Mobile"});
                     }
                 }
-
+                
+                if(Type_Transaction == "Retrait"){
+                    const resp = await  User.updateUserSoldeReduice(ID_Utilisateur, Montant);
+                }
             
                 const result = await Transaction.save(
                     {
@@ -42,6 +45,27 @@ const TransactionController = {
 
         }catch(error){
             console.log(error);
+            return res.status(400).json([{message: error.message}]);
+        }
+    },
+
+   async getMyTransactionList(req, res){
+        try {
+            const offset = req.params.offset;
+            const idUser = req.params.id;
+
+
+            if(!idUser || !offset){
+                return res.status(400).send({message: "id and offset doesn't set", params: req.params});
+            }
+
+            const transactionList = await Transaction.getMyTransactionList(Number(idUser), Number(offset));
+            const maxOffset = await Transaction.countUserTransaction(idUser);
+            
+
+            return res.status(200).send([{list : transactionList, maxOffset: maxOffset}]);
+
+        } catch (error) {
             return res.status(400).json([{message: error.message}]);
         }
     },
@@ -108,7 +132,6 @@ const TransactionController = {
              return  result ? res.status(200).json([{isDone: result}]): res.send([]);
 
         } catch (error) {
-            console.log(error);
             return res.status(400).json([{message: error.message}]);
         }
     },
@@ -119,9 +142,8 @@ const TransactionController = {
             const result = await Transaction.getAllDepot();
             const retraitResult = await Transaction.getAllRetrait();
 
-            return  res.status(200).json([{total: result[0], totalRetrait: retraitResult[0]}]);
+            return  res.status(200).json([{total: result, totalRetrait: retraitResult}]);
         } catch (error) {
-            console.log(error);
             return res.status(400).json([{message: error.message}]);   
         }
     },
@@ -130,15 +152,16 @@ const TransactionController = {
         const options = {
             retrait: {
                 min: 4700,
-                text: "Vos demandes de retraits sont traitées et vous recevrez votre accréditation au plus tard pendant 72h !"            
+                text: "Les retraits sont généralement reçus dans les 24 heures ou dans les 72 heures au plus, selon l'affluence de demande de transactions."            
             },
 
             depot: {
-                    Orange : "Procedure pour depot orange",
-                    MTN : "procedure pour depot MTN",
-                    max : 300000,
+                    Orange : "#150*1*1*656790839*",
+                    MTN : "*126*1*1*654790839*",
+                    verify: false,
+                    min : 1000,
                     pays: "Cameroun",
-                    info: "Executer le code et copier l'ID de la transaction dans le message de confirmation que vous recevez"
+                    info: "Executez le code et une fois le paiement effectué, veuillez saisir l'identifiant de la transaction sur la page de paiement dans le, sinon cela affectera votre recharge."
             }
         
         }
@@ -160,7 +183,6 @@ const TransactionController = {
 
              return  result ? res.status(200).json([{isDone: result}]): res.send([]);
         } catch (error) {
-            console.log(error);
             return res.status(400).json([{message: error.message}]);
         }
     },

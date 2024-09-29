@@ -34,7 +34,7 @@ class Notification{
 
     static async getUserNotif(id){
         const [rows] = await db.promise().query(
-            'SELECT * FROM notifications WHERE ID_Utilisateur = ? ORDER BY ID_Utilisateur DESC',
+            'SELECT * FROM notifications WHERE ID_Utilisateur = ? ORDER BY ID_Notification DESC',
             [id]
         )
 

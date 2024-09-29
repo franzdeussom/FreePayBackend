@@ -7,7 +7,6 @@ const db = mysql.createConnection(
         database: 'FREEPAY'
     }
 );
-
 db.connect((err)=> {
         if(err){
             console.error('Erreur de connexion a la base de données:', err);

@@ -30,27 +30,36 @@ const PackController = {
         
         } catch (error) {
 
-            console.error(error);
-
-            return res.status(400).send({error: "Erreur lors de la création!"});
+            return res.status(400).send({error: "Erreur lors de la création! " + error.message});
         }
       },
 
       async getAllPack(req, res){
     
-       
-        return res.status(200).json([{listPack: await Pack.getList()}]);
+       try {
+        const info = "Le prix des packages pourrait varier à chaque instant selon la tendance de variation des valeurs des cryptomonais pris en charges par nos IA pour la collecte des données. Les revenues quotidiens pourraient augmenter ou diminuer selon les variations, nous faisons le maximum pour conserver une certaine stabilité gràce a nos IA."
+        
+        return res.status(200).json([{listPack: await Pack.getList(), info: info}]);
+
+       } catch (error) {
+        return res.status(400).json([{error: error.message}]);
+       }
       },
 
       async deletePack(req, res){
-        const idPack  = req.params.id;
+        try {
+            const idPack  = req.params.id;
+                if(!idPack){
+                  return res.status(400).send({error: "Impossible de supp ce pack !"});
+              }
+            const result = await Pack.deletePack(idPack);
 
-        if(!idPack){
-            return res.status(400).send({error: "Impossible de supp ce pack !"});
+            return result ? res.status(200).json([{isDone: result}]):res.send([]);
+        } catch (error) {
+          return res.status(400).json([{error: error.message}]);
+
         }
-        const result = await Pack.deletePack(idPack);
-        return result ? res.status(200).json([{isDone: result}]):res.send([]);
-
+        
       },
 
       async update(req, res){

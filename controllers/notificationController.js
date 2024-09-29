@@ -76,7 +76,7 @@ const NotificationController = {
             
           const isNotifDeleted = await Notification.deleteAllUserNotif(id);
 
-        return isNotifDeleted ? res.status(200).json(isNotifDeleted): res.send([]);
+        return isNotifDeleted ? res.status(200).json([{isDone: isNotifDeleted}]): res.send([]);
         } catch (error) {
             return res.status(400).send([error]);
         }

@@ -5,6 +5,7 @@ const Pack = require('../models/Pack');
 const helpers = require('../helpers/helpers');
 const { validationResult } = require('express-validator');
 const Souscription = require("../models/Souscription");
+const Notification = require('../models/Notification');
 
 
  const UserController = {
@@ -12,8 +13,7 @@ const Souscription = require("../models/Souscription");
     async login(req, res){
       try{
         const { Email, Mot_De_Passe } = req.body;
-
-        let user = await User.findByEmail(Email);
+        let user = await User.findByEmail((isNaN(Email) ? Email: Number(Email)), true);
 
         if(!user){
             return res.send([]); //utilisateur introuvable.
@@ -35,16 +35,22 @@ const Souscription = require("../models/Souscription");
 
 
         const transaction = await Transaction.listUserTransaction(user.ID_Utilisateur);//get all her transactions
-        const packs = await Pack.userPackList(user.ID_Utilisateur, user.Solde_courant, user.derniere_connexion);
-  
-        if(tmpUserSolde != packs.soldeUser){
-          //le solde a été ajutser, alors mettre à jour dans la base de donnée
-          const resultUpdateSolde = await User.updateUserSolde(user.ID_Utilisateur, packs.soldeUser);
+        const pack = (await Pack.userPackList(user.ID_Utilisateur, user.Solde_courant, user.derniere_connexion));
+        
+        var packs = pack.length > 0 ? pack[0]:[];
+
+        if(pack.length > 0){
+          packs = pack[0];
+          if(tmpUserSolde != packs.soldeUser){
+            //le solde a été ajutser, alors mettre à jour dans la base de donnée
+            const resultUpdateSolde = await User.updateUserSolde(user.ID_Utilisateur, packs.soldeUser);
+          }
+          user.Solde_courant = packs.soldeUser ? packs.soldeUser : 0;
         }
+        
 
-        user.Solde_courant = packs.soldeUser;
 
-        return res.json([{ data: user, transaction: transaction, dataPacks: packs, token: token}]);
+        return res.json([{ data: user, transaction: transaction, dataPacks: pack, token: token}]);
 
       }catch(err){
         console.error(err);
@@ -55,12 +61,157 @@ const Souscription = require("../models/Souscription");
 
     async  signup(req, res){
       try{
-        
-      const resultDataUser = await User.create(req.body);
-      return res.status(201).json({resultDataUser});
 
-    }catch(error){
-      return res.status(400).send({error : 'nous n\'avons pas pu traiter votre requette'});
+          const errors = validationResult(req);
+              if (!errors.isEmpty()) {
+                return res.status(400).json({ errors: errors.array()
+              });
+
+            }
+
+          const { Nom_Utilisateur, Prenom_Utilisateur, Date_Naissance, Email, Telephone, Mot_De_Passe , CodeInvitation} = req.body;
+
+          const welcomeBonus = 500;
+          const welcomeText = "Suite à la création de votre compte, vous venez de gagner " + welcomeBonus + " XAF de bonus de bienvenue. Merci de nous avoir rejoint ! 🔥"
+
+          const sendNotif = async (id)=>{
+              const result = await Notification.send(
+                                  {
+                                      ID_Utilisateur : id,
+                                      Contenu: welcomeText,
+                                      Type_Notification: "Bienvenue",
+                                      Date_Notification: helpers.getCurrentFormatedDate(),
+                                      Lues: null
+                                  }
+              )
+              let isPreventionSend;
+
+              if(result){
+                  isPreventionSend = await User.setNewNotif(id, 1);
+              }
+
+          }
+
+          if(CodeInvitation){
+            //the user has set the id code, we need here to verify her email then the Invitation Code and get the owner ID
+            const isUserWithEmail = await User.findByEmail(String(Email).toLowerCase(), false);
+            const isUserWithPhone = await User.findByPhone(Telephone);
+
+            if(!isUserWithEmail){
+              //email not found in database, we can continue and find the owner of the invitation Code
+              if(!isUserWithPhone){
+
+                const isUserWithInvitationCode = await User.findByCodeParrainage(CodeInvitation);
+
+                if(isUserWithInvitationCode.length > 0){
+                  //invitation Code is correct, create the user
+
+                  const idParrain = String(isUserWithInvitationCode[0].ID_Utilisateur);
+
+                  //invitation code for the new user
+                  const length = Math.abs((6 - idParrain.length)); 
+
+                  const userCodeGenerated = await User.generateRandomCode(length) + idParrain;
+                  
+                  // save the user.
+                 const isUserCreaete = await User.save(
+                    {
+                      Nom_Utilisateur: Nom_Utilisateur,
+                      Prenom_Utilisateur: Prenom_Utilisateur,
+                      Date_Naissannce: Date_Naissance,
+                      Email: String(Email).toLowerCase(),
+                      Telephone: Telephone,
+                      Mot_De_Passe: Mot_De_Passe,
+                      code_parrainage: String(userCodeGenerated),
+                      new_notif : 0,
+                      derniere_connexion: null,
+                      Solde_courant: welcomeBonus,
+                      solde_commsion: 0,
+                      ID_Parrain: Number(idParrain),
+                      Role: 'user'
+                    }
+                  )
+
+                  if(isUserCreaete.length > 0){
+                    sendNotif(isUserCreaete[0].insertID);
+
+                    return res.status(200).json([{isDone : true, message: "Merci de nous avoir rejoint, connectez-vous à votre compte, " + Prenom_Utilisateur}]);
+                  }else{
+                    //any errors on process
+                    return res.status(200).json([{isDone : false, message: "Une erreur est survenue lors de la création de votre compte. Ressayez plus tard !"}])
+                  }
+
+                }else{
+                  //user with the invitaion code doesn't found, when the user has submited an invitation code
+                 return res.status(200).json([{isDone : false, message: "Aucun Utilisateur ne possède ce code d'invitation !" }]);
+                }
+
+              }else{
+                //error with the phone number, already used 
+                return res.status(200).json([{isDone: false, message: "Ce numero de telephone est déjà en cours d'utilisation." }]);
+              }
+            }else{
+              //error on the email
+                  return res.status(200).json([{isDone : false, message: "Un Utilisateur possède déjà cet email !"}]);                  
+            }
+            
+          }else{
+            //no invitation code
+
+            const isUserWithEmail = await User.findByEmail(String(Email).toLowerCase(), false); //check the email if it's not already use.
+            const isUserWithPhone = await User.findByPhone(Telephone); // check the phone number if...
+
+            if(!isUserWithEmail){ 
+              //email available
+              if(!isUserWithPhone){
+                //phone available
+
+                let userCodeGenerated = 0;
+                let isCodeUsed = true;
+
+                do{
+                  userCodeGenerated = await User.generateRandomCode(6);
+                    isCodeUsed = await User.findByCodeParrainage(userCodeGenerated).length == 0;
+                }while(isCodeUsed);
+
+                const isUserCreaete = await User.save(
+                  {
+                    Nom_Utilisateur: Nom_Utilisateur,
+                    Prenom_Utilisateur: Prenom_Utilisateur,
+                    Date_Naissannce: Date_Naissance,
+                    Email: String(Email).toLowerCase(),
+                    Telephone: Telephone,
+                    Mot_De_Passe: Mot_De_Passe,
+                    code_parrainage: String(userCodeGenerated),
+                    new_notif : 0,
+                    derniere_connexion: null,
+                    Solde_courant: welcomeBonus,
+                    solde_commsion: 0,
+                    ID_Parrain: null,
+                    Role: 'user'
+                  }
+                   
+                )
+
+                if([isUserCreaete].length > 0){
+                  sendNotif(isUserCreaete[0].insertID);
+                  return res.status(200).json([{ isDone : true, message: "Merci de nous avoir rejoint, connectez-vous à votre compte, " + Prenom_Utilisateur}]);
+                }else{
+                  return res.status(200).json([{ isDone : false, message: "Une erreur est survenue lors de la création de votre compte. Ressayez plus tard !"}])
+                }
+              }else{
+                //error with the phone number, aleready used 
+                return res.status(200).json([{isDone: false, message: "Ce numero de telephone est déjà en cours d'utilisation." }]);
+              }
+
+            }else{
+                //error on the email
+                return res.status(200).json([{isDone : false, message: "Un Utilisateur possède déjà cet email !"}]);                  
+            }
+          }
+      
+      }catch(error){
+      return res.status(400).send({error : 'nous n\'avons pas pu traiter votre requette' + error});
     }
   },
 
@@ -71,7 +222,7 @@ const Souscription = require("../models/Souscription");
       }
 
       // Trouver l'utilisateur par son email
-      const user = await User.findByEmail(email);
+      const user = await User.findByEmail(String(email).toLowerCase(), false);
 
       if (!user) {
         return res.status(402).json({ message: 'Utilisateur introuvable' });
@@ -114,22 +265,27 @@ const Souscription = require("../models/Souscription");
               }
 
               const result = await User.delete(id);
-              return  result ? res.status(200).json([{isDone: result}]): res.send([]);
+              return  result ? res.status(200).json([{isDone: result}]) : res.send([]);
               
           } catch (error) {
-              console.log(error);
-              return res.status(400).send([{error: "erreur lors de l'execution  de suppression!"}]);
+              console.log();
+              return res.status(400).send([{error: "erreur lors de l'execution  de suppression! " + error.message}]);
           }
     },
 
     async getAllUser(req, res){
         try {
-          const user = await User.all();
 
-          return res.status(200).json([{data: user}]);
+          const offset = req.params.offset;
+
+          const user = await User.all(Number(offset));
+          const maxOffset = await User.countUser();
+
+          return res.status(200).json([{data: user, maxOffset: maxOffset}]);
+
         } catch (error) {
-          console.error(error);
-          return res.status(400).send([{message:'Erreur du serveur'}]);
+
+          return res.status(400).send([{message:'Erreur du serveur' + error.message}]);
         }
     },
 
@@ -149,8 +305,7 @@ const Souscription = require("../models/Souscription");
                                               });
                return result ? res.status(200).json([{IsDone: true }]): res.send([]);                                
           } catch (error) {
-              console.log(error);
-              return res.status(400).send({error: "erreur lors de l'execution  de la mise à jour !"})
+              return res.status(400).send({error: "erreur lors de l'execution  de la mise à jour ! " +error.message});
           }
     },
 
@@ -161,14 +316,16 @@ const Souscription = require("../models/Souscription");
         
         return res.status(200).json([{
                                       transactionList: await Transaction.listUserTransaction(id), 
-                                      souscriptionList: await Souscription.getUserSouscription(id) 
+                                      souscriptionList: await Souscription.getUserSouscription(id),
+                                      maxOffset: await Transaction.countUserTransaction(id) 
                                     }]);
         
       } catch (error) {
-          return res.status(400).send({error: "erreur lors de l'execution  !"})
+          return res.status(400).send({error: "erreur lors de l'execution  ! " + error.message})
       }
         
     },
+
 
     async changeUserRule(req, res){
         try {
@@ -188,7 +345,7 @@ const Souscription = require("../models/Souscription");
             return isDone ? res.status(200).json([{isDone: isDone}]):res.send([]);
 
         } catch (error) {
-          return res.status(400).send({error: "erreur lors de l'execution  de la mise à jour !"})
+          return res.status(400).send({error: "erreur lors de l'execution  de la mise à jour ! " + error.message})
           
         }
     },
@@ -208,17 +365,26 @@ const Souscription = require("../models/Souscription");
           return res.json([{data: user, transaction: transaction}]);
 
         } catch (error) {
-          console.log(error);
-          return res.status(400).send({error: "erreur lors de l'execution d'actualisation !"})
+          return res.status(400).send({error: "erreur lors de l'execution d'actualisation ! " + error.message })
         }
     },
 
 
     async wocoin(req, res){
       const option = {
-            text: "Comming Soon! 2025 🤫"
+            text: "Comming Soon! <strong>2025</strong> 🤫"
       }
       return res.status(200).json([option]);
+    },
+
+    async getWhatsappData(req, res){
+        const data = {
+            text : "Bonjour, je souheterais poser un probleme.", // user text, when he want to sent the message
+            tel : "+237698403201",
+            mail : "freepay.online.service@gmail.com"
+        }
+
+       return res.status(200).json([{options: data}]);
     }
 }
 

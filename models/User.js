@@ -43,21 +43,19 @@ class User {
     try {
       // Hacher le mot de passe avant de l'enregistrer
       const Mot_De_Passe = await bcrypt.hash(user.Mot_De_Passe, 10);
-
       // Enregistrer l'utilisateur dans la base de données
       const [rows] = await db.promise().query(
-        'INSERT INTO utilisateurs SET ?',
-        Mot_De_Passe
+        'INSERT INTO utilisateurs(Nom_Utilisateur, Prenom_Utilisateur, Date_Naissance, Email, Telephone, Mot_De_Passe, Solde_courant, solde_commsion, Role, ID_Parrain, code_parrainage, new_notif, derniere_connexion) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',
+          [user.Nom_Utilisateur, user.Prenom_Utilisateur, user.Date_Naissance, user.Email, user.Telephone, Mot_De_Passe, user.Solde_courant, user.solde_commsion, user.Role, user.ID_Parrain, user.code_parrainage, user.new_notif, user.derniere_connexion]
       );
 
       if (rows.affectedRows === 1) {
-        return true; // Insertio réussie
+        return [{insertID: rows.insertId, isDone: true}]; // Insertio réussie
       } else {
-        return false; // Échec de l'insertion
+        return []; // Échec de l'insertion
       }
     } catch (error) {
       console.error(error);
-      throw error;
     }
   }
 
@@ -126,46 +124,85 @@ class User {
 static async findByCodeParrainage(codeParrainage) {
   try {
     const [rows] = await db.promise().query('SELECT * FROM utilisateurs WHERE code_parrainage = ?', [codeParrainage]);
-    return rows.length > 0 ? rows[0] : null; // Renvoyer l'utilisateur si trouvé, sinon null
+    return rows.length > 0 ? rows : []; // Renvoyer l'utilisateur si trouvé, sinon null
   } catch (error) {
     console.error('Erreur:', error);
     throw error; 
   }
-};
+}
 
   // Méthodes statiques pour interagir avec la base de données
 
-  static async findByEmail(email) {
+  static async findByEmail(email, isLogin) {
     try {
-      const [rows] = await db.promise().query(
-        'SELECT * FROM utilisateurs WHERE Email = ?',
-        [email]
-      );
-      if (rows.length > 0) {
-        // Créer un nouvel objet User à partir des données de la base de données
-        return new User(
-          rows[0].ID_Utilisateur,
-          rows[0].Nom_Utilisateur,
-          rows[0].Prenom_Utilisateur,
-          rows[0].Date_Naissance,
-          rows[0].Email,
-          rows[0].Telephone,
-          rows[0].Mot_De_Passe,
-          rows[0].Solde_courant,
-          rows[0].solde_commsion,
-          rows[0].Role,
-          rows[0].ID_Parrain,
-          rows[0].code_parrainage,
-          rows[0].new_notif == 0 ? false:true,
-          rows[0].derniere_connexion
+      if(!isLogin){
+        //connection with email or phone 
+        const [rows] = await db.promise().query(
+          'SELECT * FROM utilisateurs WHERE Email = ?',
+          [String(email).toLowerCase()]
         );
-      } else {
-        return null; // Renvoie null si non trouvé
+        if (rows.length > 0) {
+          // Créer un nouvel objet User à partir des données de la base de données
+          return new User(
+            rows[0].ID_Utilisateur,
+            rows[0].Nom_Utilisateur,
+            rows[0].Prenom_Utilisateur,
+            rows[0].Date_Naissance,
+            rows[0].Email,
+            rows[0].Telephone,
+            rows[0].Mot_De_Passe,
+            rows[0].Solde_courant,
+            rows[0].solde_commsion,
+            rows[0].Role,
+            rows[0].ID_Parrain,
+            rows[0].code_parrainage,
+            rows[0].new_notif == 0 ? false:true,
+            rows[0].derniere_connexion
+          );
+        } else {
+          return null; // Renvoie null si non trouvé
+        }
+      }else{
+        const [rows] = await db.promise().query(
+          'SELECT * FROM utilisateurs WHERE Email = ? OR Telephone = ?',
+          [email, email]
+        );
+        if (rows.length > 0) {
+          // Créer un nouvel objet User à partir des données de la base de données
+          return new User(
+            rows[0].ID_Utilisateur,
+            rows[0].Nom_Utilisateur,
+            rows[0].Prenom_Utilisateur,
+            rows[0].Date_Naissance,
+            rows[0].Email,
+            rows[0].Telephone,
+            rows[0].Mot_De_Passe,
+            rows[0].Solde_courant,
+            rows[0].solde_commsion,
+            rows[0].Role,
+            rows[0].ID_Parrain,
+            rows[0].code_parrainage,
+            rows[0].new_notif == 0 ? false:true,
+            rows[0].derniere_connexion
+          );
+        } else {
+          return null; // Renvoie null si non trouvé
+        }
       }
+     
     } catch (error) {
       console.error(error);
       throw error;
     }
+  }
+
+  static async findByPhone(tel){
+        const [rows] = await db.promise().query(
+          'SELECT * FROM utilisateurs WHERE Telephone = ? ',
+          [tel]
+        );
+
+      return rows.length > 0 ? rows[0]: null;
   }
 
   static async delete(id){
@@ -177,12 +214,19 @@ static async findByCodeParrainage(codeParrainage) {
       return rows.affectedRows == 1;
   }
 
-  static async all(){
+  static async all(offset){
     const [rows] = await db.promise().query(
-      'SELECT * FROM utilisateurs ORDER BY Nom_Utilisateur ASC'
+      'SELECT * FROM utilisateurs ORDER BY Nom_Utilisateur ASC LIMIT 30 OFFSET ?', 
+      [offset]
     );
     
     return rows.length > 0 ? rows:[];
+  }
+
+  static async countUser(){
+    const [rows] = await db.promise().query('SELECT COUNT(*) as Limit_OFFSET FROM utilisateurs ');
+        
+    return rows.length > 0 ? rows[0].Limit_OFFSET:0;
   }
   
   static async updateLastConnexionDate(date, idUser){
@@ -190,7 +234,7 @@ static async findByCodeParrainage(codeParrainage) {
         'UPDATE utilisateurs SET derniere_connexion = ? WHERE ID_Utilisateur = ?',
         [date, idUser]
       ) 
-      return rows.affectedRows ==1;
+      return rows.affectedRows == 1;
   }
 
  static async updateUserSolde(iduser, solde){
@@ -204,7 +248,7 @@ static async findByCodeParrainage(codeParrainage) {
 
   static async addSolde(iduser, montant){
     const [rows] = await db.promise().query(
-      'UPDATE utilisateurs SET Solde_courant = Solde_courant + ? WHERE ID_utilisateur = ?',
+      'UPDATE utilisateurs SET Solde_courant = Solde_courant + ?  WHERE ID_utilisateur = ?',
       [montant, iduser]
     );
 

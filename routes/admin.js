@@ -5,7 +5,7 @@ const transactionController = require('../controllers/transactionController');
 const NotificationController = require('../controllers/notificationController');
 const publicationController = require('../controllers/publicationController');
 
-const { createPacksValidationRules, updateDepotState, createPublicationValidationRules , updateRetraitState, notificationValidationRules, updateValidationRules, transactionValidationRules} = require('../middleware/validation'); // Importe les règles
+const { createPacksValidationRules, updateDepotState, createPublicationValidationRules , updateRetraitState, notificationValidationRules, UpdatePacksValidationRules} = require('../middleware/validation'); // Importe les règles
 const authToken = require('../middleware/authMiddleware');
 const router = express.Router();
 
@@ -14,13 +14,13 @@ const router = express.Router();
 
 router.post('/pack/', authToken, createPacksValidationRules(), packController.create);
 
-router.put('/pack', authToken, updateValidationRules(), packController.update);
+router.put('/pack', authToken, UpdatePacksValidationRules(), packController.update);
 
 router.delete('/pack/:id',authToken, packController.deletePack);
 
 router.delete('/users/:id', authToken, userController.delete);
 
-router.get('/users', authToken, userController.getAllUser);
+router.get('/users/:offset', authToken, userController.getAllUser);
 
 router.post('/notification', authToken, notificationValidationRules(), NotificationController.send)
 
@@ -49,6 +49,9 @@ router.get('/transaction-depot', authToken, transactionController.getDepotReques
 router.put('/transaction-depot', authToken, updateDepotState(), transactionController.updateDepotState);
 
 router.put('/user-rule/:idadmin', authToken, userController.changeUserRule);
+
+router.get('/list-transactions/:id/:offset', authToken, transactionController.getMyTransactionList);
+
 
 
 module.exports = router;

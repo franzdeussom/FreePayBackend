@@ -8,13 +8,13 @@ const souscriptionController = require('../controllers/sosucriptionController');
 const authMiddleware = require('../middleware/authMiddleware');
 const publicationController = require('../controllers/publicationController');
 const { validationResult } = require('express-validator');
-const { changePassewordValidationRules, saveSouscriptionValidationnRules, updateValidationRules } = require('../middleware/validation'); // Importe les règles
+const { changePassewordValidationRules, transactionValidationRules, saveSouscriptionValidationnRules, updateValidationRules } = require('../middleware/validation'); // Importe les règles
 
 //authentification route
 
 router.post('/login', userController.login);
 
-router.post('/signup', userController.signup);
+router.post('/singup', userController.signup);
 
 router.get('/password-reset/:email', userController.sendMail);
 
@@ -46,5 +46,11 @@ router.get('/wocoin', authMiddleware, userController.wocoin);
 router.post('/transaction-depot', authMiddleware, transaction.save);
 
 router.get('/refresh/:id', authMiddleware, userController.homerefresh);
+
+router.post('/transaction-withdrawals', authMiddleware, transactionValidationRules(), transaction.save);
+
+router.get('/list-transactions/:id/:offset', authMiddleware, transaction.getMyTransactionList);
+
+router.get('/wha-me', authMiddleware, userController.getWhatsappData);
 
 module.exports = router;

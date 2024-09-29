@@ -42,7 +42,7 @@ const publicationController = {
                  return res.status(400).json({ errors: errors.array()});
             }
 
-            const {contenu, nom, prenom, id_admin, nbrLike, nbrCommentaire, bgcolor } = req.body;
+            const {contenu, nom, prenom, id_admin, nbrLike, nbrCommentaire, bgcolor, id } = req.body;
 
             const resutl = await Publication.update(
                 {
@@ -54,7 +54,8 @@ const publicationController = {
                     nbrLike: nbrLike,
                     nbrCommentaire: nbrCommentaire,
                     bgcolor: bgcolor,
-                    profilUrl: null
+                    profilUrl: null,
+                    id: id
                 }
             );
             

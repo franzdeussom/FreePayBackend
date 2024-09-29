@@ -28,17 +28,18 @@ class Souscription{
     }
     static async updateParrainSoldeCommission(id_parrain, commissionParrain){
         const [rows] = await db.promise().query(
-            'UPDATE utilisateurs SET solde_commsion = solde_commsion + ? WHERE ID_Utilisateur = ? ',
-            [id_parrain, commissionParrain]
-        );
+            'UPDATE utilisateurs SET solde_commsion = solde_commsion + ?, Solde_courant = Solde_courant + ? WHERE ID_Utilisateur = ? ',
+            [commissionParrain, commissionParrain, id_parrain]
+        );  
+    
 
         return rows.affectedRows == 1;
     }
 
     static async removeSouscription(idSouscription, idUser){
             const [rows] = await db.promise().query(
-                'DELETE FROM souscriptions_pack WHERE id_souscription IN = (?) AND id_utilisateur = ?',
-                [idSouscription, idUser]
+                'DELETE FROM souscriptions_pack WHERE id_souscription IN = (' + idSouscription.map(id => "'" + id + "'" ).join(',') + ') AND id_utilisateur = ?',
+                [idUser]
             )
             return rows.affectedRows == 0;
     }

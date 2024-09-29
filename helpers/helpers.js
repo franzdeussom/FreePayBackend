@@ -89,6 +89,16 @@ exports.getDateSplited = (date)=>{
                    gain = gain + dailyGain;  
                 }*/
                 return  {newSole: Number.parseFloat(soldeUser)+dailyGain, expireIn: checkDateResult.jourRestants, isStillValid: checkDateResult.isStillValid};
+            }else{
+                //pack expiré mais utilisateur possède des jours sans conenxion, auxquels le revenu de son pack doit etre payer
+                
+                const jourSansConnexion = this.getRestantDayOfPack(derniere_connexion, 0).jourRestants; //nombre de jour que l'utilisateur a fait sans se connecter
+                
+                if( jourSansConnexion > 0){
+                    const dailyGain = ((prix * Taux_Rendement) / 100) * jourSansConnexion;
+
+                    return  {newSole: Number.parseFloat(soldeUser)+dailyGain, expireIn: checkDateResult.jourRestants, isStillValid: checkDateResult.isStillValid};
+                }
             }    
         }
        
@@ -118,8 +128,11 @@ exports.getPackExpireDate = (souscripionDate, duree)=>{
 
         const SouscriptionDate = new Date(anneeSouscription, moisSouscription-1, jourSouscription);
         const dateExpire = new Date(annee, mois-1, jour);
-        const difference = SouscriptionDate.getTime() - dateExpire.getTime();
-        const nbrJour = Math.abs(difference / (1000 * 3600 * 24));
+        const difference =dateExpire.getTime() - SouscriptionDate.getTime();
+        const nbrJour = difference / (1000 * 3600 * 24);
+
+        console.log(dateSouscription, duree);
+        console.log('nombre de jour restant', nbrJour)
 
         return {jourRestants: nbrJour, isStillValid: nbrJour >= 0 };
  }

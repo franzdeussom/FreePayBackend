@@ -63,7 +63,7 @@ class Pack{
                                                         lastConnection //deniere connecion de l'utilisateur
                                                         );
                
-                //detecter les pack expirér
+                //detecter les pack expirés
                 if(checkDate.isStillValid){
                     packs.push(pack);
                     packs[i].expiredIn = checkDate.expireIn;
@@ -78,11 +78,11 @@ class Pack{
         let resultUpdateExpiration = null;
 
         if(packExpiredID.length > 0){
-            //supprimer la souscriptioin expiré de l'utilisateur courrant
+            //supprimer les souscriptions expirées de l'utilisateur courrant
             resultUpdateExpiration = Souscription.removeSouscription(packExpiredID, iduser);
         }
 
-        return rows.length > 0 ? {pack: packs, soldeUser: userSolde, packExpiredID: packExpiredID, updateDone: resultUpdateExpiration }: [];
+        return rows.length > 0 ? [{pack: packs, soldeUser: userSolde, packExpiredID: packExpiredID, updateDone: resultUpdateExpiration }]: [];
     }
 
     static async deletePack(id){

@@ -8,6 +8,17 @@ exports.changePassewordValidationRules = () => {
     ];
 };
 
+exports.createUser = ()=>{
+    return [
+      check('Nom_Utilisateur').notEmpty().withMessage(''),
+      check('Prenom_Utilisateur').notEmpty().withMessage(''),
+      check('Date_Naissance').notEmpty().withMessage(''),
+      check('Email').notEmpty().withMessage(''),
+      check('Telephone').notEmpty().withMessage(''),
+      check('Mot_De_Passe').notEmpty().withMessage(''),
+    ]
+}
+
 exports.createPacksValidationRules = () =>{
     return[
       check('Nom_Pack').notEmpty().withMessage('le Nom du pack doit etre défini!'),
@@ -42,23 +53,21 @@ exports.saveSouscriptionValidationnRules = () =>{
 
 exports.transactionValidationRules = ()=>{
     return [
-      check(Type_Transaction).notEmpty().withMessage("Type de transaction requis"),
-      check(Montant).notEmpty().withMessage("Montant de la trasaction requis"),
-      check(ID_Utilisateur).notEmpty().withMessage("id de l'utilisateur requis"),
+      check('Type_Transaction').notEmpty().withMessage("Type de transaction requis"),
+      check('Montant').notEmpty().withMessage("Montant de la trasaction requis"),
+      check('ID_Utilisateur').notEmpty().withMessage("id de l'utilisateur requis"),
     ]
 }
 
 exports.updateValidationRules = ()=>{
+  //user
       return [
-        check('ID_Pack').notEmpty().withMessage("ID introuvable"),
-        check('Nom_Pack').notEmpty().withMessage("Nom d'utilisateur attendu"),
-        check('Description').notEmpty().withMessage('Email Obligatoire !'),
-        check('Montant_Minimal').notEmpty().withMessage('Telephone requis!'),
-        check("Taux_Rendement").notEmpty().withMessage('Prenom Obligatoire'),
-        check('Duree_Pack').notEmpty().withMessage('Telephone requis!'),
-        check('Conditions').notEmpty().withMessage('Telephone requis!')
-        
-      
+        check('ID_Utilisateur').notEmpty().withMessage("ID introuvable"),
+        check('Nom_Utilisateur').notEmpty().withMessage("Nom d'utilisateur attendu"),
+        check('Email').notEmpty().withMessage('Email Obligatoire !'),
+        check('Telephone').notEmpty().withMessage('Telephone requis!'),
+        check("Prenom_Utilisateur").notEmpty().withMessage('Prenom Obligatoire'),
+    
       ]
 }
 

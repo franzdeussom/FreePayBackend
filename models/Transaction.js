@@ -29,12 +29,29 @@ class Transaction{
 
      static async listUserTransaction(idUser){
             const [rows] = await db.promise().query(
-                'SELECT * FROM transactions WHERE ID_Utilisateur = ? ORDER BY ID_Transaction DESC',
+                'SELECT * FROM transactions WHERE ID_Utilisateur = ? ORDER BY ID_Transaction DESC LIMIT 3',
                 [idUser]
             );
             return rows.length > 0 ? rows:[];
      }
 
+     static async getMyTransactionList(idUser, offset){
+        const [rows] = await db.promise().query(
+            'SELECT * FROM transactions WHERE ID_Utilisateur = ? ORDER BY ID_Transaction DESC LIMIT 30 OFFSET ?',
+            [idUser, offset]
+        );
+        return rows.length > 0 ? rows:[];
+     }
+
+    static async countUserTransaction(iduser){
+        const [rows] = await db.promise().query(
+            'SELECT COUNT(*) as Limit_OFFSET FROM transactions WHERE ID_Utilisateur = ?',
+            [iduser]
+        );
+        
+        return rows.length > 0 ? rows[0].Limit_OFFSET:0;
+
+    }
 
      static async save(transaction, mobileTransactionID){
             const [result] = await db.promise().query(
@@ -60,7 +77,7 @@ class Transaction{
      //admin
      static async getRetraitRequest(){
         const [rows] = await db.promise().query(
-            "SELECT utilisateurs.ID_Utilisateur, utilisateurs.Nom_Utilisateur, utilisateurs.Prenom_Utilisateur, utilisateurs.Telephone, transactions.Montant, transactions.Date_Transaction FROM utilisateurs, transactions WHERE transactions.ID_Utilisateur = utilisateurs.ID_Utilisateur AND Type_Transaction = 'Retrait'"
+            "SELECT utilisateurs.ID_Utilisateur, utilisateurs.Nom_Utilisateur, utilisateurs.Prenom_Utilisateur, utilisateurs.Telephone,transactions.ID_Transaction, transactions.Montant, transactions.Date_Transaction FROM utilisateurs, transactions WHERE transactions.ID_Utilisateur = utilisateurs.ID_Utilisateur AND Type_Transaction = 'Retrait' AND Statut_Transaction = 'Traitement en cours...' ORDER BY ID_Transaction DESC"
         )
 
         return rows.length == 0 ? []:rows;
@@ -68,7 +85,7 @@ class Transaction{
 
      static async getDepotRequest(){
         const [rows] = await db.promise().query(
-            "SELECT utilisateurs.ID_Utilisateur, utilisateurs.Nom_Utilisateur, utilisateurs.Prenom_Utilisateur, utilisateurs.Telephone,transactions.ID_Transaction, transactions.Montant, transactions.Date_Transaction, transactions.mobileTransactionID FROM utilisateurs, transactions WHERE transactions.ID_Utilisateur = utilisateurs.ID_Utilisateur AND Statut_Transaction = 'Traitement en cours...'"
+            "SELECT utilisateurs.ID_Utilisateur, utilisateurs.Nom_Utilisateur, utilisateurs.Prenom_Utilisateur, utilisateurs.Telephone,transactions.ID_Transaction, transactions.Montant, transactions.Date_Transaction, transactions.mobileTransactionID FROM utilisateurs, transactions WHERE transactions.ID_Utilisateur = utilisateurs.ID_Utilisateur AND Type_Transaction = 'Dépot' AND Statut_Transaction = 'Traitement en cours...' ORDER BY ID_Transaction DESC"
         )
 
         return rows.length == 0 ? []:rows;
@@ -79,7 +96,8 @@ class Transaction{
         const [rows] = await db.promise().query(query,
             ['Approuvée']
         );
-        return rows;
+
+        return rows.length != 0 ? rows[0].TOTAL: 0;
      }
 
      static async getAllRetrait(){
@@ -87,7 +105,7 @@ class Transaction{
         const [rows] = await db.promise().query(
             query
         );
-        return rows;
+        return rows.length != 0 ? rows[0].TOTAL: 0;
      }
 
      static async updateRetraitState(idTransaction, value, id_user, montant){
@@ -100,7 +118,7 @@ class Transaction{
                             ID_Utilisateur : id_user,
                             Date_Transaction: helpers.getCurrentFormatedDate(),
                             Type_Notification: "Retrait",
-                            Contenu: "Votre demande de retrait à été approuvé et vos fonds ont été transféré à votre numero de Telephone d'inscription. Montant : " + montant + ' XAF',
+                            Contenu: "Votre demande de retrait à été approuvé et vos fonds ont été transféré à votre numero de Telephone d'inscription. <br> Montant : " + montant + ' XAF',
                             Lues: null
             });
 
