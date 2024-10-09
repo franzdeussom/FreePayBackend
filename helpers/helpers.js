@@ -73,30 +73,24 @@ exports.getDateSplited = (date)=>{
 
             if(checkDateResult.isStillValid){
                 const jourSansConnexion = this.getRestantDayOfPack(derniere_connexion, 0).jourRestants; //nombre de jour que l'utilisateur a fait sans se connecter
-                
+
                 if( jourSansConnexion > 0 ){
                     //au
                     const dailyGain = ((prix * Taux_Rendement) / 100) * jourSansConnexion;
-
                     return  {newSole: Number.parseFloat(soldeUser)+dailyGain, expireIn: checkDateResult.jourRestants, isStillValid: checkDateResult.isStillValid};
                 }
                 
                 const dailyGain = ((prix * Taux_Rendement) / 100);
                 
     
-              /*  let gain  = 0;
-                for (let index = 0; index <= (Math.abs(duree - checkDateResult.jourRestants)); index++) {
-                   gain = gain + dailyGain;  
-                }*/
                 return  {newSole: Number.parseFloat(soldeUser)+dailyGain, expireIn: checkDateResult.jourRestants, isStillValid: checkDateResult.isStillValid};
             }else{
                 //pack expiré mais utilisateur possède des jours sans conenxion, auxquels le revenu de son pack doit etre payer
-                
+
                 const jourSansConnexion = this.getRestantDayOfPack(derniere_connexion, 0).jourRestants; //nombre de jour que l'utilisateur a fait sans se connecter
                 
                 if( jourSansConnexion > 0){
                     const dailyGain = ((prix * Taux_Rendement) / 100) * jourSansConnexion;
-
                     return  {newSole: Number.parseFloat(soldeUser)+dailyGain, expireIn: checkDateResult.jourRestants, isStillValid: checkDateResult.isStillValid};
                 }
             }    
@@ -131,9 +125,6 @@ exports.getPackExpireDate = (souscripionDate, duree)=>{
         const difference =dateExpire.getTime() - SouscriptionDate.getTime();
         const nbrJour = difference / (1000 * 3600 * 24);
 
-        console.log(dateSouscription, duree);
-        console.log('nombre de jour restant', nbrJour)
-
-        return {jourRestants: nbrJour, isStillValid: nbrJour >= 0 };
+        return {jourRestants: duree > 0 ? nbrJour: Math.abs(nbrJour), isStillValid: nbrJour >= 0 };
  }
   

@@ -38,7 +38,7 @@ class Souscription{
 
     static async removeSouscription(idSouscription, idUser){
             const [rows] = await db.promise().query(
-                'DELETE FROM souscriptions_pack WHERE id_souscription IN = (' + idSouscription.map(id => "'" + id + "'" ).join(',') + ') AND id_utilisateur = ?',
+                "DELETE FROM souscriptions_pack WHERE id_souscription IN (" + idSouscription.map(Number).join(',') + ") AND id_utilisateur = ?",
                 [idUser]
             )
             return rows.affectedRows == 0;

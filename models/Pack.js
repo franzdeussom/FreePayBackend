@@ -50,7 +50,7 @@ class Pack{
         let packExpiredID = [];//collections des ID de souscriptions expirées
         
         const [rows] = await db.promise().query(query, [iduser]);
-        
+        let tmpSolde = 0;
         if(rows.length > 0){
             //l'utilisateur possède des packs auxquels il a souscrit, alors calculer les revenues de chaque packs et ajuster son solde
             rows.forEach((pack, i) => {
@@ -59,7 +59,7 @@ class Pack{
                                                         pack.Duree_Pack, 
                                                         pack.Taux_Rendement,
                                                         pack.montant_investi, 
-                                                        userSolde, 
+                                                        tmpSolde, 
                                                         lastConnection //deniere connecion de l'utilisateur
                                                         );
                
@@ -67,13 +67,16 @@ class Pack{
                 if(checkDate.isStillValid){
                     packs.push(pack);
                     packs[i].expiredIn = checkDate.expireIn;
-                    userSolde = checkDate.newSole; 
+                    tmpSolde = checkDate.newSole; 
                 }else{
+                    tmpSolde = checkDate.newSole;
                     packExpiredID.push(Number(pack.id_souscription));
                 }
                 
             });
         }
+
+        userSolde += tmpSolde;
 
         let resultUpdateExpiration = null;
 
