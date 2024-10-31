@@ -152,14 +152,18 @@ const TransactionController = {
         const options = {
             retrait: {
                 min: 4700,
+                tax: 10,
+                applyTax: true,
                 text: "Les retraits sont généralement reçus dans les 24 heures ou dans les 72 heures au plus, selon l'affluence de demande de transactions."            
             },
 
             depot: {
-                    Orange : "#150*1*1*656790839*",
+                    Orange : "#150*14*289786*656605219*",
                     MTN : "*126*1*1*654790839*",
                     verify: false,
                     min : 1000,
+                    OrangeTransactionIDLength: 20,
+                    MTNTransactionIDLength: 10,
                     pays: "Cameroun",
                     info: "Executez le code et une fois le paiement effectué, veuillez saisir l'identifiant de la transaction sur la page de paiement dans le, sinon cela affectera votre recharge."
             }

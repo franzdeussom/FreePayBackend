@@ -118,7 +118,7 @@ const Notification = require('../models/Notification');
                     {
                       Nom_Utilisateur: Nom_Utilisateur,
                       Prenom_Utilisateur: Prenom_Utilisateur,
-                      Date_Naissannce: Date_Naissance,
+                      Date_Naissance: Date_Naissance,
                       Email: String(Email).toLowerCase(),
                       Telephone: Telephone,
                       Mot_De_Passe: Mot_De_Passe,
@@ -178,7 +178,7 @@ const Notification = require('../models/Notification');
                   {
                     Nom_Utilisateur: Nom_Utilisateur,
                     Prenom_Utilisateur: Prenom_Utilisateur,
-                    Date_Naissannce: Date_Naissance,
+                    Date_Naissance: Date_Naissance,
                     Email: String(Email).toLowerCase(),
                     Telephone: Telephone,
                     Mot_De_Passe: Mot_De_Passe,
@@ -383,6 +383,7 @@ const Notification = require('../models/Notification');
             tel : "+237698403201",
             mail : "freepay.online.service@gmail.com"
         }
+
 
        return res.status(200).json([{options: data}]);
     }

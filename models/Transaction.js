@@ -135,7 +135,7 @@ class Transaction{
                             ID_Utilisateur : id_user,
                             Date_Transaction: helpers.getCurrentFormatedDate(),
                             Type_Notification: "Dépot",
-                            Contenu: "Dépot effectué avec succès, Montant : " + montant + ' XAF',
+                            Contenu: "Dépôt effectué avec succès, Montant : " + montant + ' XAF',
                             Lues: null
             });
 

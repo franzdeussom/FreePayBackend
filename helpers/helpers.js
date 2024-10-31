@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
+//const fs = require('fs');
 
 exports.generateJWT = (payload, secret, expiresIn) => {
     return jwt.sign(payload, secret, { expiresIn }); // Générer un token JWT
@@ -127,4 +128,19 @@ exports.getPackExpireDate = (souscripionDate, duree)=>{
 
         return {jourRestants: duree > 0 ? nbrJour: Math.abs(nbrJour), isStillValid: nbrJour >= 0 };
  }
+
+ /*exports.writeFile = ()=>{
+    try{
+        fs.writeFileSync("whatsapp.txt", "698403201-654229770");
+        console.log('Fichier creer');
+    }catch(err){
+        console.log(err);
+    }
+    
+ }
+
+ exports.getFile = ()=>{
+    const data = fs.readFileSync('whatsapp.txt', 'utf8');
+    console.log('data read', data);
+ }*/
   
