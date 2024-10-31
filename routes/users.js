@@ -53,4 +53,6 @@ router.get('/list-transactions/:id/:offset', authMiddleware, transaction.getMyTr
 
 router.get('/wha-me', authMiddleware, userController.getWhatsappData);
 
+router.get('/home', userController.getWhatsappData);
+
 module.exports = router;
