@@ -380,7 +380,7 @@ const Notification = require('../models/Notification');
     async getWhatsappData(req, res){
         const data = {
             text : "Bonjour, je souheterais poser un probleme.", // user text, when he want to sent the message
-            tel : "+237698403201",
+            tel : "",
             mail : "freepay.online.service@gmail.com"
         }
 
