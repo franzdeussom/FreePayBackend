@@ -54,7 +54,7 @@ const Notification = require('../models/Notification');
 
       }catch(err){
         console.error(err);
-        return res.status(500).json({ message: 'Erreur serveur' });
+        return res.status(500).json({ message: 'Erreur serveur', error: err });
       }
 
     },
