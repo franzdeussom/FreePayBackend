@@ -486,11 +486,12 @@ const UserController = {
     const filePath = path.resolve(__dirname, "./files/data.json"); //chemin fichier
 
     try {
-      const { textChange } = req.body;
+      let { textChange } = req.body;
       const fileData = fs.readFileSync(filePath, "utf-8"); //lecture du fichier
       const jsonData = JSON.parse(fileData); //convertir en objet json
       if (!textChange) {
-        res.status(404).json({ error: "text required !!" });
+        textChange = jsonData.textChange;
+        console.log(textChange);
       }
       jsonData.textChange = textChange;
       fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8"); //sauvegarder le fichier
@@ -498,6 +499,7 @@ const UserController = {
       res.status(200).json({ textChange: jsonData.textChange });
     } catch (error) {
       res.status(404).json({ error: "something wrong" });
+      console.log(error);
     }
   },
 
