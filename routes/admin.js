@@ -1,57 +1,128 @@
-const express = require('express');
-const packController = require('../controllers/packController');
-const userController = require('../controllers/userController');
-const transactionController = require('../controllers/transactionController');
-const NotificationController = require('../controllers/notificationController');
-const publicationController = require('../controllers/publicationController');
+const express = require("express");
+const packController = require("../controllers/packController");
+const userController = require("../controllers/userController");
+const transactionController = require("../controllers/transactionController");
+const NotificationController = require("../controllers/notificationController");
+const publicationController = require("../controllers/publicationController");
 
-const { createPacksValidationRules, updateDepotState, createPublicationValidationRules , updateRetraitState, notificationValidationRules, UpdatePacksValidationRules} = require('../middleware/validation'); // Importe les règles
-const authToken = require('../middleware/authMiddleware');
+const {
+  createPacksValidationRules,
+  updateDepotState,
+  createPublicationValidationRules,
+  updateRetraitState,
+  notificationValidationRules,
+  UpdatePacksValidationRules,
+} = require("../middleware/validation"); // Importe les règles
+const authToken = require("../middleware/authMiddleware");
 const router = express.Router();
-
 
 //admin route
 
-router.post('/pack/', authToken, createPacksValidationRules(), packController.create);
+router.post(
+  "/pack/",
+  authToken,
+  createPacksValidationRules(),
+  packController.create
+);
 
-router.put('/pack', authToken, UpdatePacksValidationRules(), packController.update);
+router.put(
+  "/pack",
+  authToken,
+  UpdatePacksValidationRules(),
+  packController.update
+);
 
-router.delete('/pack/:id',authToken, packController.deletePack);
+router.delete("/pack/:id", authToken, packController.deletePack);
 
-router.delete('/users/:id', authToken, userController.delete);
+router.delete("/users/:id", authToken, userController.delete);
 
-router.get('/users/:offset', authToken, userController.getAllUser);
+router.get("/users/:offset", authToken, userController.getAllUser);
 
-router.post('/notification', authToken, notificationValidationRules(), NotificationController.send)
+router.patch("/woocoin", userController.wocoin);
 
-router.get('/transaction-souscription/:id', authToken, userController.userTransactionAndSouscription);
+router.patch("/whatsappDatas", authToken, userController.getWhatsappData);
 
-router.post('/transaction-echecs', authToken, transactionController.echecsTransact);
+router.post(
+  "/notification",
+  authToken,
+  notificationValidationRules(),
+  NotificationController.send
+);
 
-router.post('/transaction-depot-echec', authToken, transactionController.echecDepotTransaction);
+router.get(
+  "/transaction-souscription/:id",
+  authToken,
+  userController.userTransactionAndSouscription
+);
 
-router.get('/my-pub/:id', authToken, publicationController.getMyPub);
+router.post(
+  "/transaction-echecs",
+  authToken,
+  transactionController.echecsTransact
+);
 
-router.put('/publication', authToken, createPublicationValidationRules(), publicationController.update);
+router.post(
+  "/transaction-depot-echec",
+  authToken,
+  transactionController.echecDepotTransaction
+);
 
-router.delete('/publication/:id', authToken, publicationController.delete);
+router.get("/my-pub/:id", authToken, publicationController.getMyPub);
 
-router.post('/publication', authToken,createPublicationValidationRules(), publicationController.create);
+router.put(
+  "/publication",
+  authToken,
+  createPublicationValidationRules(),
+  publicationController.update
+);
 
-router.put('/transaction-state', authToken, updateRetraitState(), transactionController.updateRetraitState);
+router.delete("/publication/:id", authToken, publicationController.delete);
 
-router.get('/transaction-total', authToken, transactionController.getTotalAmount);
+router.post(
+  "/publication",
+  authToken,
+  createPublicationValidationRules(),
+  publicationController.create
+);
 
-router.get('/transaction-request', authToken, transactionController.getRetraitRequest);
+router.put(
+  "/transaction-state",
+  authToken,
+  updateRetraitState(),
+  transactionController.updateRetraitState
+);
 
-router.get('/transaction-depot', authToken, transactionController.getDepotRequest);
+router.get(
+  "/transaction-total",
+  authToken,
+  transactionController.getTotalAmount
+);
 
-router.put('/transaction-depot', authToken, updateDepotState(), transactionController.updateDepotState);
+router.get(
+  "/transaction-request",
+  authToken,
+  transactionController.getRetraitRequest
+);
 
-router.put('/user-rule/:idadmin', authToken, userController.changeUserRule);
+router.get(
+  "/transaction-depot",
+  authToken,
+  transactionController.getDepotRequest
+);
 
-router.get('/list-transactions/:id/:offset', authToken, transactionController.getMyTransactionList);
+router.put(
+  "/transaction-depot",
+  authToken,
+  updateDepotState(),
+  transactionController.updateDepotState
+);
 
+router.put("/user-rule/:idadmin", authToken, userController.changeUserRule);
 
+router.get(
+  "/list-transactions/:id/:offset",
+  authToken,
+  transactionController.getMyTransactionList
+);
 
 module.exports = router;
