@@ -491,7 +491,6 @@ const UserController = {
       const jsonData = JSON.parse(fileData); //convertir en objet json
       if (!textChange) {
         textChange = jsonData.textChange;
-        console.log(textChange);
       }
       jsonData.textChange = textChange;
       fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8"); //sauvegarder le fichier

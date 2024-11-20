@@ -33,6 +33,7 @@ router.put(
 );
 
 router.delete("/pack/:id", authToken, packController.deletePack);
+router.patch("/allPacks", packController.getAllPack);
 
 router.delete("/users/:id", authToken, userController.delete);
 

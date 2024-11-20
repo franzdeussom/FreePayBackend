@@ -13,5 +13,6 @@
   "OrangeTransactionIDLength": 20,
   "MTNTransactionIDLength": 10,
   "pays": "congo",
-  "info": "Executez le code et une fois le paiement effectué, veuillez saisir l'identifiant de la transaction sur la page de paiement dans le, sinon cela affectera votre recharge."
+  "info": "Executez le code et une fois le paiement effectué, veuillez saisir l'identifiant de la transaction sur la page de paiement dans le, sinon cela affectera votre recharge.",
+  "infoPack": "Le prix des packages pourrait varier à chaque instant selon la tendance de variation des valeurs des cryptomonais pris en charges par nos IA pour la collecte des données. Les revenues quotidiens pourraient augmenter ou diminuer selon les variations, nous faisons le maximum pour conserver une certaine stabilité gràce a nos IA."
 }
