@@ -38,7 +38,7 @@ router.delete("/users/:id", authToken, userController.delete);
 
 router.get("/users/:offset", authToken, userController.getAllUser);
 
-router.patch("/woocoin", userController.wocoin);
+router.patch("/woocoin", authToken, userController.wocoin);
 
 router.patch("/whatsappDatas", authToken, userController.getWhatsappData);
 
