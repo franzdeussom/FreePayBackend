@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-const db = mysql.createConnection(
+const db = mysql.createPool(
     {
         host: 'localhost',
         user: 'root',
@@ -7,13 +7,13 @@ const db = mysql.createConnection(
         database: 'FREEPAY'
     }
 );
-db.connect((err)=> {
+/*db.connect((err)=> {
         if(err){
             console.error('Erreur de connexion a la base de données:', err);
             return;
         } 
         console.log('Connexion etablie avec la bd.'); 
-});
+});*/
 
 module.exports = db;
 

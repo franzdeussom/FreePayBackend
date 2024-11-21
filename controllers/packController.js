@@ -84,7 +84,7 @@ const PackController = {
                               Duree_Pack: Duree_Pack,
                               Conditions: Conditions
               });
-
+              
               return result ? res.status(200).json([{isDone: result}]): res.send([]);
               
             } catch (error) {
