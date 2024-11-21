@@ -165,8 +165,8 @@ const TransactionController = {
                     OrangeTransactionIDLength: 20,
                     MTNTransactionIDLength: 10,
                     pays: "Cameroun",
-                    info: "Executez le code et une fois le paiement effectué, veuillez saisir l'identifiant de la transaction sur la page de paiement dans le, sinon cela affectera votre recharge."
-            }
+                    info: "Executez le code et une fois le paiement effectué, veuillez saisir l'identifiant de la transaction reçu par Message sur le champ approprié et confirmer le paiement, sinon cela affectera votre recharge. Votre compte sera crédité une fois le paiement confirmé, actualiser votre profil regulièrement après la transaction."
+                }
         
         }
 
