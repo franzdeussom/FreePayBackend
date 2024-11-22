@@ -51,23 +51,17 @@ const PackController = {
   },
 
   //@desc update and display all pack
-  //@route PATCH /allPacks
+  //@route GET /allPacks
   //@access private
   async getAllPack(req, res) {
     const filepath = path.resolve(__dirname, "./files/data.json");
     try {
       const fileData = fs.readFileSync(filepath, "utf-8");
       const jsonData = JSON.parse(fileData);
-      let { infoPack } = req.body;
-      if (!infoPack) {
-        infoPack = jsonData.infoPack;
-      }
-      jsonData.infoPack = infoPack;
-      fs.writeFileSync(filepath, JSON.stringify(jsonData, null, 2), "utf-8");
 
       return res
         .status(200)
-        .json([{ listPack: await Pack.getList(), info: infoPack }]);
+        .json([{ listPack: await Pack.getList(), info: jsonData.infoPack }]);
     } catch (error) {
       return res.status(400).json([{ error: error.message }]);
     }

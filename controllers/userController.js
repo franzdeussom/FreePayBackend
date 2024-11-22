@@ -480,20 +480,14 @@ const UserController = {
   },
 
   //@desc : change text option
-  // @route : PATCH /woocoin
+  // @route : GET /woocoin
   // access private
   async wocoin(req, res) {
     const filePath = path.resolve(__dirname, "./files/data.json"); //chemin fichier
 
     try {
-      let { textChange } = req.body;
       const fileData = fs.readFileSync(filePath, "utf-8"); //lecture du fichier
       const jsonData = JSON.parse(fileData); //convertir en objet json
-      if (!textChange) {
-        textChange = jsonData.textChange;
-      }
-      jsonData.textChange = textChange;
-      fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), "utf-8"); //sauvegarder le fichier
 
       res.status(200).json({ textChange: jsonData.textChange });
     } catch (error) {
@@ -503,33 +497,20 @@ const UserController = {
   },
 
   //@desc change datas concerning whatsapp
-  //@route PATCH /whatsappDatas
+  //@route GET /whatsappDatas
   //@ access private
   async getWhatsappData(req, res) {
     const filepath = path.resolve(__dirname, "./files/data.json");
 
     try {
-      let { text, tel, mail } = req.body;
       const fileData = fs.readFileSync(filepath, "utf-8");
       const jsonData = JSON.parse(fileData);
-      if (!text) {
-        text = jsonData.text;
-      }
-      if (!tel) {
-        tel = jsonData.tel;
-      }
-      if (!mail) {
-        mail = jsonData.mail;
-      }
 
-      jsonData.text = text;
-      jsonData.tel = tel;
-      jsonData.mail = mail;
-      fs.writeFileSync(filepath, JSON.stringify(jsonData, null, 2), "utf-8");
-
-      res
-        .status(200)
-        .json({ text: jsonData.text, tel: jsonData.tel, mail: jsonData.mail });
+      res.status(200).json({
+        textWhatsapp: jsonData.textWhatsapp,
+        tel: jsonData.tel,
+        mail: jsonData.mail,
+      });
     } catch (error) {
       res.status(404).json({ error: "something wrong !!" });
     }

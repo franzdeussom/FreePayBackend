@@ -164,14 +164,52 @@ const TransactionController = {
     }
   },
 
-  //@desc update transactions options
-  //@route PATCH /transactionOptions && GET /operation-options
+  //@desc GET all informations that can change
+  //@route GET /allInformations
   //@access private
   async getTransactionOptiion(req, res) {
     const filepath = path.resolve(__dirname, "./files/data.json");
     const fileData = fs.readFileSync(filepath, "utf-8");
     const jsonData = JSON.parse(fileData);
+
+    try {
+      const options = {
+        retrait: {
+          minRetrait: jsonData.minRetrait,
+          tax: jsonData.tax,
+          applyTax: jsonData.applyTax,
+          textRetrait: jsonData.textRetrait,
+        },
+        depot: {
+          orange: jsonData.orange,
+          MTN: jsonData.MTN,
+          verify: jsonData.verify,
+          minDepot: jsonData.minDepot,
+          OrangeTransactionIDLength: jsonData.OrangeTransactionIDLength,
+          MTNTransactionIDLength: jsonData.MTNTransactionIDLength,
+          pays: jsonData.pays,
+          info: jsonData.info,
+        },
+      };
+
+      return res.status(200).json({ options: options });
+    } catch (error) {
+      res.status(404).json({ error: error });
+    }
+  },
+
+  //@desc update all informations that can change
+  //@route PATCH /allInformations
+  //@access private
+  async updateTransactionOptiion(req, res) {
+    const filepath = path.resolve(__dirname, "./files/data.json");
+    const fileData = fs.readFileSync(filepath, "utf-8");
+    const jsonData = JSON.parse(fileData);
     let {
+      textWhatsapp,
+      mail,
+      tel,
+      textChange,
       minRetrait,
       tax,
       applyTax,
@@ -184,7 +222,38 @@ const TransactionController = {
       MTNTransactionIDLength,
       pays,
       info,
+      infoPack,
+      htmlSalutation,
+      htmlSalutation2,
+      htmlSalutation3,
     } = req.body;
+
+    if (!textWhatsapp) {
+      textWhatsapp = jsonData.textWhatsapp;
+    }
+
+    if (!htmlSalutation) {
+      htmlSalutation = jsonData.htmlSalutation;
+    }
+
+    if (!htmlSalutation2) {
+      htmlSalutation2 = jsonData.htmlSalutation2;
+    }
+    if (!htmlSalutation3) {
+      htmlSalutation3 = jsonData.htmlSalutation3;
+    }
+
+    if (!tel) {
+      tel = jsonData.tel;
+    }
+
+    if (!textChange) {
+      textChange = jsonData.textChange;
+    }
+
+    if (!mail) {
+      mail = jsonData.mail;
+    }
 
     if (!minRetrait) {
       minRetrait = jsonData.minRetrait;
@@ -234,7 +303,18 @@ const TransactionController = {
       info = jsonData.info;
     }
 
+    if (!infoPack) {
+      infoPack = jsonData.infoPack;
+    }
+
+    jsonData.htmlSalutation = htmlSalutation;
+    jsonData.htmlSalutation2 = htmlSalutation2;
+    jsonData.htmlSalutation3 = htmlSalutation3;
+    jsonData.textWhatsapp = textWhatsapp;
+    jsonData.tel = tel;
+    jsonData.mail = mail;
     jsonData.minRetrait = minRetrait;
+    jsonData.textChange = textChange;
     jsonData.tax = tax;
     jsonData.applyTax = applyTax;
     jsonData.textRetrait = textRetrait;
@@ -246,9 +326,18 @@ const TransactionController = {
     jsonData.MTNTransactionIDLength = MTNTransactionIDLength;
     jsonData.pays = pays;
     jsonData.info = info;
+    jsonData.infoPack = infoPack;
 
     fs.writeFileSync(filepath, JSON.stringify(jsonData, null, 2), "utf-8");
     const options = {
+      whatsapp: {
+        textWhatsapp: jsonData.textWhatsapp,
+        tel: jsonData.tel,
+        mail: jsonData.mail,
+      },
+      woocoin: {
+        textChange: jsonData.textChange,
+      },
       retrait: {
         minRetrait: jsonData.minRetrait,
         tax: jsonData.tax,
@@ -264,6 +353,14 @@ const TransactionController = {
         MTNTransactionIDLength: jsonData.MTNTransactionIDLength,
         pays: jsonData.pays,
         info: jsonData.info,
+      },
+      pack: {
+        infoPack: jsonData.infoPack,
+      },
+      salutation: {
+        htmlSalutation: jsonData.htmlSalutation,
+        htmlSalutation2: jsonData.htmlSalutation2,
+        htmlSalutation3: jsonData.htmlSalutation3,
       },
     };
 
