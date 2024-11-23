@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcrypt');
+const fs = require("fs");
+const path = require("path");
 //const fs = require('fs');
 
 exports.generateJWT = (payload, secret, expiresIn) => {
@@ -19,6 +21,9 @@ exports.sendMail =  async (email, code, username) =>{
             pass: 'kyuh abvn spro olpk'
         }
     });
+        const filepath = path.resolve(__dirname, "./files/data.json");
+        const fileData = fs.readFileSync(filepath, "utf-8");
+        const jsonData = JSON.parse(fileData);
 
     const mailOptions = {
         from : 'freepay.online.service@gmail.com',

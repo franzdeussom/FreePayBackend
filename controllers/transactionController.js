@@ -176,7 +176,7 @@ const TransactionController = {
         },
       };
 
-      return res.status(200).json({ options: options });
+      return res.status(200).json([{ options: options }]);
     } catch (error) {
       res.status(404).json({ error: error });
     }

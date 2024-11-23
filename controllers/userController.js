@@ -401,7 +401,7 @@ const path = require("path");
           tel : jsonData.tel,
           mail : jsonData.mail
       }
-       return res.status(200).json({options: data});
+       return res.status(200).json([{options: data}]);
       } catch (error) {
         res.status(404).json({ error: "something wrong !!" });
       }
