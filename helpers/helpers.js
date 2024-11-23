@@ -25,7 +25,8 @@ exports.sendMail =  async (email, code, username) =>{
         to : email,
         mimeType: 'text/html',
         subject: 'Code de Recupération',
-        html: `<p>Bonjour ${username},</p><p>Vous avez demandé à réinitialiser votre mot de passe.</p> <p>Votre code de rénitialisation : ${code} </p> <p>Veuillez prendre en compte que ce code expire en 90 secondes.</p> <br>Merci ! <br>FreePay, La direction.`
+        html: `<p>${jsonData.htmlSalutation} ${username},</p> ${jsonData.htmlSalutation2} ${code} ${jsonData.Salutation3}`,
+        // html: `<p>Bonjour ${username},</p><p>Vous avez demandé à réinitialiser votre mot de passe.</p> <p>Votre code de rénitialisation : ${code} </p> <p>Veuillez prendre en compte que ce code expire en 90 secondes.</p> <br>Merci ! <br>FreePay, La direction.`
     };
     transporter.sendMail(mailOptions, (error, info)=>{
         if(!error){
