@@ -237,10 +237,17 @@ const TransactionController = {
             minDepot,
             OrangeTransactionIDLength,
             MTNTransactionIDLength,
+            htmlSalutation,
+            htmlSalutation2,
+            htmlSalutation3,
             pays,
             info,
           } = req.body;
-      
+
+          jsonData.htmlSalutation = htmlSalutation ? htmlSalutation : jsonData.htmlSalutation;
+          jsonData.htmlSalutation2 = htmlSalutation2 ? htmlSalutation2 : jsonData.htmlSalutation2;
+          jsonData.htmlSalutation3 = htmlSalutation3 ? htmlSalutation3 : jsonData.htmlSalutation3;
+
           jsonData.minRetrait = minRetrait ? minRetrait : jsonData.minRetrait;
           jsonData.tax = tax ? tax: jsonData.tax;
           jsonData.applyTax = applyTax ? applyTax:jsonData.applyTax;

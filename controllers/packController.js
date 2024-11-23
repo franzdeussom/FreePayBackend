@@ -1,7 +1,8 @@
 const Pack = require('../models/Pack');
 const {validationResult} = require('express-validator');
 const helpers = require('../helpers/helpers');
-
+const fs = require("fs");
+const path = require("path");
 
 
 const PackController = {
