@@ -1,7 +1,7 @@
 {
   "textWhatsapp": "Bonjour, je souheterais poser un probleme.",
   "mail": "freepay.online.service@gmail.com",
-  "tel": 0,
+  "tel": "",
   "minRetrait": 4700,
   "tax": 10,
   "applyTax": false,
@@ -17,6 +17,6 @@
   "info": "Executez le code et une fois le paiement effectué, veuillez saisir l'identifiant de la transaction sur la page de paiement dans le, sinon cela affectera votre recharge.",
   "infoPack": "Le prix des packages pourrait varier à chaque instant selon la tendance de variation des valeurs des cryptomonais pris en charges par nos IA pour la collecte des données. Les revenues quotidiens pourraient augmenter ou diminuer selon les variations, nous faisons le maximum pour conserver une certaine stabilité gràce a nos IA.",
   "htmlSalutation": "Hello",
-  "htmlSalutation2": "<p> avez demandé à réinitialiser votre mot de passVouse.</p> <p>Votre code de rénitialisation :",
-  "htmlSalutation3": "</p> <p>Veuillez prendre en compte que ce code expire en 90 secondes.</p> <br>Merci ! <br>FreePay, La direction."
+  "htmlSalutation2": "<p>Vous avez demandé à réinitialiser votre mot de passe.</p> <p>Votre code de rénitialisation :",
+  "htmlSalutation3": "<p>Veuillez prendre en compte que ce code expire en 90 secondes.</p> <br>Cordialement,  <br>FreePay Inc, Mail Service."
 }
