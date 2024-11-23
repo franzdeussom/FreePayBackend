@@ -159,16 +159,16 @@ const TransactionController = {
         
         const options = {
         retrait: {
-          minRetrait: jsonData.minRetrait,
+          min: jsonData.minRetrait,
           tax: jsonData.tax,
           applyTax: jsonData.applyTax,
           text: jsonData.textRetrait,
         },
         depot: {
-          orange: jsonData.orange,
+          Orange: jsonData.Orange,
           MTN: jsonData.MTN,
           verify: jsonData.verify,
-          minDepot: jsonData.minDepot,
+          min: jsonData.minDepot,
           OrangeTransactionIDLength: jsonData.OrangeTransactionIDLength,
           MTNTransactionIDLength: jsonData.MTNTransactionIDLength,
           pays: jsonData.pays,
@@ -231,6 +231,7 @@ const TransactionController = {
             tax,
             applyTax,
             textRetrait,
+            textWhatsapp,
             orange,
             MTN,
             verify,
@@ -241,7 +242,9 @@ const TransactionController = {
             htmlSalutation2,
             htmlSalutation3,
             pays,
+            mail,
             info,
+            tel
           } = req.body;
 
           jsonData.htmlSalutation = htmlSalutation ? htmlSalutation : jsonData.htmlSalutation;
@@ -260,6 +263,9 @@ const TransactionController = {
           jsonData.MTNTransactionIDLength = MTNTransactionIDLength ? MTNTransactionIDLength : jsonData.MTNTransactionIDLength;
           jsonData.pays = pays ? pays : jsonData.pays;
           jsonData.info = info ? info : jsonData.info;
+          jsonData.mail = mail ? mail:jsonData.mail;
+          jsonData.tel = tel ? tel:jsonData.tel;
+          jsonData.textWhatsapp = textWhatsapp ? textWhatsapp:jsonData.textWhatsapp;
       
           fs.writeFileSync(filepath, JSON.stringify(jsonData, null, 2), "utf-8");
           
