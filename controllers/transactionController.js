@@ -2,6 +2,8 @@ const {validationResult} = require('express-validator');
 const Transaction = require('../models/Transaction');
 const helepers = require('../helpers/helpers');
 const User = require('../models/User');
+const fs = require("fs");
+const path = require("path");
 
 
 const TransactionController = {
@@ -215,7 +217,52 @@ const TransactionController = {
             console.log(error);
             return res.status(400).json([{message: error.message}]);
         }
-    }
+    },
+
+    //access GET & PUT /update-parameters
+    async updateParameters(req, res) {
+        const filepath = path.resolve(__dirname, "./files/data.json");
+        const fileData = fs.readFileSync(filepath, "utf-8");
+        const jsonData = JSON.parse(fileData);
+    
+        try {
+          let {
+            minRetrait,
+            tax,
+            applyTax,
+            textRetrait,
+            orange,
+            MTN,
+            verify,
+            minDepot,
+            OrangeTransactionIDLength,
+            MTNTransactionIDLength,
+            pays,
+            info,
+          } = req.body;
+      
+          jsonData.minRetrait = minRetrait ? minRetrait : jsonData.minRetrait;
+          jsonData.tax = tax ? tax: jsonData.tax;
+          jsonData.applyTax = applyTax ? applyTax:jsonData.applyTax;
+          jsonData.textRetrait = textRetrait ? textRetrait : jsonData.textRetrait;
+          jsonData.Orange = orange ? orange : jsonData.Orange;
+          jsonData.MTN = MTN ? MTN : jsonData.MTN;
+          jsonData.verify = verify ? verify : jsonData.verify;
+          jsonData.minDepot = minDepot ? minDepot : jsonData.minDepot;
+          jsonData.OrangeTransactionIDLength = OrangeTransactionIDLength ? OrangeTransactionIDLength : jsonData.OrangeTransactionIDLength;
+          jsonData.MTNTransactionIDLength = MTNTransactionIDLength ? MTNTransactionIDLength : jsonData.MTNTransactionIDLength;
+          jsonData.pays = pays ? pays : jsonData.pays;
+          jsonData.info = info ? info : jsonData.info;
+      
+          fs.writeFileSync(filepath, JSON.stringify(jsonData, null, 2), "utf-8");
+          
+          return res
+            .status(200)
+            .json([{ result: "requete executee", option: jsonData }]);
+        } catch (error) {
+          return res.status(400).json([{ message: error.message }]);
+        }
+      },
 }
 
 module.exports = TransactionController;
