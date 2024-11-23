@@ -1,7 +1,7 @@
 {
   "textWhatsapp": "Bonjour, je souheterais poser un probleme.",
   "mail": "freepay.online.service@gmail.com",
-  "tel": "",
+  "tel": 0,
   "minRetrait": 4700,
   "tax": 10,
   "applyTax": false,

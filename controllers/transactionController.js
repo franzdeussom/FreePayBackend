@@ -260,10 +260,11 @@ const TransactionController = {
           jsonData.verify = (req.method == "GET") ? jsonData.verify : verify;
           jsonData.minDepot = minDepot ? minDepot : jsonData.minDepot;
           jsonData.OrangeTransactionIDLength = OrangeTransactionIDLength ? OrangeTransactionIDLength : jsonData.OrangeTransactionIDLength;
-          jsonData.MTNTransactionIDLength = MTNTransactionIDLength ? MTNTransactionIDLength : jsonData.MTNTransactionIDLength;
+          jsonData.MTNTransactionIDLength = MTNTransactionIDLength ? MTNTransactionIDLength  : jsonData.MTNTransactionIDLength;
           jsonData.pays = pays ? pays : jsonData.pays;
           jsonData.info = info ? info : jsonData.info;
-          jsonData.mail = mail ? mail:jsonData.mail;
+          
+          jsonData.mail = mail ? mail : jsonData.mail;
           jsonData.tel = tel ? tel:jsonData.tel;
           jsonData.textWhatsapp = textWhatsapp ? textWhatsapp:jsonData.textWhatsapp;
       
