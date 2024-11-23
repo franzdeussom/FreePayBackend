@@ -36,11 +36,12 @@ const PackController = {
       },
 
       async getAllPack(req, res){
-    
-       try {
-        const info = "Le prix des packages pourrait varier à chaque instant selon la tendance de variation des valeurs des cryptomonais pris en charges par nos IA pour la collecte des données. Les revenues quotidiens pourraient augmenter ou diminuer selon les variations, nous faisons le maximum pour conserver une certaine stabilité gràce a nos IA."
+        try {
+          const filepath = path.resolve(__dirname, "./files/data.json");
+          const fileData = fs.readFileSync(filepath, "utf-8");
+          const jsonData = JSON.parse(fileData);
         
-        return res.status(200).json([{listPack: await Pack.getList(), info: info}]);
+        return res.status(200).json([{listPack: await Pack.getList(), info: jsonData.infoPack}]);
 
        } catch (error) {
         return res.status(400).json([{error: error.message}]);
