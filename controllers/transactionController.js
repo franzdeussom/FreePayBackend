@@ -147,30 +147,37 @@ const TransactionController = {
             return res.status(400).json([{message: error.message}]);   
         }
     },
+   
+ async getTransactionOptiion(req, res){
 
-    async getTransactionOptiion(req, res){
-        const options = {
-            retrait: {
-                min: 4700,
-                tax: 10,
-                applyTax: true,
-                text: "Les retraits sont généralement reçus dans les 24 heures ou dans les 72 heures au plus, selon l'affluence de demande de transactions."            
-            },
-
-            depot: {
-                    Orange : "#150*14*289786*656605219*",
-                    MTN : "*126*1*1*654790839*",
-                    verify: false,
-                    min : 1000,
-                    OrangeTransactionIDLength: 20,
-                    MTNTransactionIDLength: 10,
-                    pays: "Cameroun",
-                    info: "Executez le code et une fois le paiement effectué, veuillez saisir l'identifiant de la transaction reçu par Message sur le champ approprié et confirmer le paiement, sinon cela affectera votre recharge. Votre compte sera crédité une fois le paiement confirmé, actualiser votre profil regulièrement après la transaction."
-                }
+    try {
+        const filepath = path.resolve(__dirname, "./files/data.json");
+        const fileData = fs.readFileSync(filepath, "utf-8");
+        const jsonData = JSON.parse(fileData);
         
-        }
+        const options = {
+        retrait: {
+          minRetrait: jsonData.minRetrait,
+          tax: jsonData.tax,
+          applyTax: jsonData.applyTax,
+          text: jsonData.textRetrait,
+        },
+        depot: {
+          orange: jsonData.orange,
+          MTN: jsonData.MTN,
+          verify: jsonData.verify,
+          minDepot: jsonData.minDepot,
+          OrangeTransactionIDLength: jsonData.OrangeTransactionIDLength,
+          MTNTransactionIDLength: jsonData.MTNTransactionIDLength,
+          pays: jsonData.pays,
+          info: jsonData.info,
+        },
+      };
 
-        return res.status(200).json([{options: options}]);
+      return res.status(200).json({ options: options });
+    } catch (error) {
+      res.status(404).json({ error: error });
+    }
     },
 
     async echecsTransact(req, res){
