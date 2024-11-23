@@ -386,7 +386,43 @@ const Notification = require('../models/Notification');
 
 
        return res.status(200).json([{options: data}]);
-    }
+    },
+
+    async wocoin(req, res) {
+      const filePath = path.resolve(__dirname, "./files/data.json"); //chemin fichier
+  
+      try {
+        const fileData = fs.readFileSync(filePath, "utf-8"); //lecture du fichier
+        const jsonData = JSON.parse(fileData); //convertir en objet json
+        const option = {
+          text: "Comming Soon! <strong>2025</strong> 🤫"
+        }
+        res.status(200).json({ text: jsonData.textChange });
+      } catch (error) {
+        res.status(404).json({ error: "something wrong" });
+        console.log(error);
+      }
+    },
+  
+    //@desc change datas concerning whatsapp
+    //@route GET /whatsappDatas
+    //@ access private
+    async getWhatsappData(req, res) {
+      const filepath = path.resolve(__dirname, "./files/data.json");
+  
+      try {
+        const fileData = fs.readFileSync(filepath, "utf-8");
+        const jsonData = JSON.parse(fileData);
+  
+        res.status(200).json({
+          textWhatsapp: jsonData.textWhatsapp,
+          tel: jsonData.tel,
+          mail: jsonData.mail,
+        });
+      } catch (error) {
+        res.status(404).json({ error: "something wrong !!" });
+      }
+    },
 }
 
 module.exports = UserController;
