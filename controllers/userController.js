@@ -369,25 +369,6 @@ const Notification = require('../models/Notification');
         }
     },
 
-
-    async wocoin(req, res){
-      const option = {
-            text: "Comming Soon! <strong>2025</strong> 🤫"
-      }
-      return res.status(200).json([option]);
-    },
-
-    async getWhatsappData(req, res){
-        const data = {
-            text : "Bonjour, je souheterais poser un probleme.", // user text, when he want to sent the message
-            tel : "",
-            mail : "freepay.online.service@gmail.com"
-        }
-
-
-       return res.status(200).json([{options: data}]);
-    },
-
     async wocoin(req, res) {
       const filePath = path.resolve(__dirname, "./files/data.json"); //chemin fichier
   
@@ -395,9 +376,10 @@ const Notification = require('../models/Notification');
         const fileData = fs.readFileSync(filePath, "utf-8"); //lecture du fichier
         const jsonData = JSON.parse(fileData); //convertir en objet json
         const option = {
-          text: "Comming Soon! <strong>2025</strong> 🤫"
+          text: jsonData.textChange
         }
-        res.status(200).json({ text: jsonData.textChange });
+
+        return res.status(200).json([option]);
       } catch (error) {
         res.status(404).json({ error: "something wrong" });
         console.log(error);
@@ -407,18 +389,18 @@ const Notification = require('../models/Notification');
     //@desc change datas concerning whatsapp
     //@route GET /whatsappDatas
     //@ access private
-    async getWhatsappData(req, res) {
-      const filepath = path.resolve(__dirname, "./files/data.json");
-  
+    async getWhatsappData(req, res) {  
       try {
+        const filepath = path.resolve(__dirname, "./files/data.json");
         const fileData = fs.readFileSync(filepath, "utf-8");
         const jsonData = JSON.parse(fileData);
-  
-        res.status(200).json({
-          textWhatsapp: jsonData.textWhatsapp,
-          tel: jsonData.tel,
-          mail: jsonData.mail,
-        });
+
+        const data = {
+          text : jsonData.textWhatsapp, // user text, when he want to sent the message
+          tel : jsonData.tel,
+          mail : jsonData.mail
+      }
+       return res.status(200).json({options: data});
       } catch (error) {
         res.status(404).json({ error: "something wrong !!" });
       }
