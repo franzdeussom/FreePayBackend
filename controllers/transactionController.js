@@ -250,11 +250,11 @@ const TransactionController = {
 
           jsonData.minRetrait = minRetrait ? minRetrait : jsonData.minRetrait;
           jsonData.tax = tax ? tax: jsonData.tax;
-          jsonData.applyTax = applyTax ? applyTax:jsonData.applyTax;
+          jsonData.applyTax = (req.method == "GET") ? jsonData.applyTax : applyTax;
           jsonData.textRetrait = textRetrait ? textRetrait : jsonData.textRetrait;
           jsonData.Orange = orange ? orange : jsonData.Orange;
           jsonData.MTN = MTN ? MTN : jsonData.MTN;
-          jsonData.verify = verify ? verify : jsonData.verify;
+          jsonData.verify = (req.method == "GET") ? jsonData.verify : verify;
           jsonData.minDepot = minDepot ? minDepot : jsonData.minDepot;
           jsonData.OrangeTransactionIDLength = OrangeTransactionIDLength ? OrangeTransactionIDLength : jsonData.OrangeTransactionIDLength;
           jsonData.MTNTransactionIDLength = MTNTransactionIDLength ? MTNTransactionIDLength : jsonData.MTNTransactionIDLength;

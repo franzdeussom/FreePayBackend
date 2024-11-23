@@ -18,6 +18,11 @@ router.put('/pack', authToken, UpdatePacksValidationRules(), packController.upda
 
 router.delete('/pack/:id',authToken, packController.deletePack);
 
+router.get("/update-parameters", transactionController.updateParameters);
+
+router.put("/update-parameters", transactionController.updateParameters);
+
+
 router.delete('/users/:id', authToken, userController.delete);
 
 router.get('/users/:offset', authToken, userController.getAllUser);
