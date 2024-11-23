@@ -42,7 +42,7 @@ const SouscriptionController = {
                                                 {
                                                     Date_Notification: helpers.getCurrentFormatedDate(),
                                                     Type_Notification: Type_Transaction,
-                                                    Contenu: "L'achat de Package effectué. montant débité de votre solde " + montant_investi,
+                                                    Contenu: "L'achat de Package effectué. montant débité de votre solde " + montant_investi + " XAF",
                                                     ID_Utilisateur: id_utilisateur,
                                                     Lues: 0
                                                 }
