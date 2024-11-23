@@ -6,7 +6,8 @@ const helpers = require('../helpers/helpers');
 const { validationResult } = require('express-validator');
 const Souscription = require("../models/Souscription");
 const Notification = require('../models/Notification');
-
+const fs = require("fs");
+const path = require("path");
 
  const UserController = {
 
