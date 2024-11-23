@@ -227,6 +227,7 @@ const TransactionController = {
     
         try {
           let {
+            infoPack,
             minRetrait,
             tax,
             applyTax,
@@ -263,6 +264,7 @@ const TransactionController = {
           jsonData.MTNTransactionIDLength = MTNTransactionIDLength ? MTNTransactionIDLength  : jsonData.MTNTransactionIDLength;
           jsonData.pays = pays ? pays : jsonData.pays;
           jsonData.info = info ? info : jsonData.info;
+          jsonData.infoPack = infoPack ? infoPack : jsonData.infoPack;
           
           jsonData.mail = mail ? mail : jsonData.mail;
           jsonData.tel = tel ? tel:jsonData.tel;
