@@ -16,11 +16,11 @@ router.post('/pack/', authToken, createPacksValidationRules(), packController.cr
 
 router.put('/pack', authToken, UpdatePacksValidationRules(), packController.update);
 
-router.delete('/pack/:id',authToken, packController.deletePack);
+router.delete('/pack/:id', authToken, packController.deletePack);
 
-router.get("/update-parameters", transactionController.updateParameters);
+router.get("/update-parameters",authToken, transactionController.updateParameters);
 
-router.put("/update-parameters", transactionController.updateParameters);
+router.put("/update-parameters",authToken, transactionController.updateParameters);
 
 
 router.delete('/users/:id', authToken, userController.delete);
