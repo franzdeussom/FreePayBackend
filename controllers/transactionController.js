@@ -226,55 +226,23 @@ const TransactionController = {
         const jsonData = JSON.parse(fileData);
     
         try {
-          let {
-            infoPack,
-            minRetrait,
-            tax,
-            applyTax,
-            textRetrait,
-            textWhatsapp,
-            orange,
-            MTN,
-            verify,
-            minDepot,
-            OrangeTransactionIDLength,
-            MTNTransactionIDLength,
-            htmlSalutation,
-            htmlSalutation2,
-            htmlSalutation3,
-            pays,
-            mail,
-            info,
-            tel
-          } = req.body;
+          if(req.method == "GET"){
+                 
+             return res
+                .status(200)
+                .json([{ option: jsonData }]);
+          }else{
 
-          jsonData.htmlSalutation = htmlSalutation ? htmlSalutation : jsonData.htmlSalutation;
-          jsonData.htmlSalutation2 = htmlSalutation2 ? htmlSalutation2 : jsonData.htmlSalutation2;
-          jsonData.htmlSalutation3 = htmlSalutation3 ? htmlSalutation3 : jsonData.htmlSalutation3;
+            Object.assign(jsonData, req.body);
+            fs.writeFileSync(filepath, JSON.stringify(jsonData, null, 2), "utf-8");
 
-          jsonData.minRetrait = minRetrait ? minRetrait : jsonData.minRetrait;
-          jsonData.tax = tax ? tax: jsonData.tax;
-          jsonData.applyTax = (req.method == "GET") ? jsonData.applyTax : applyTax;
-          jsonData.textRetrait = textRetrait ? textRetrait : jsonData.textRetrait;
-          jsonData.Orange = orange ? orange : jsonData.Orange;
-          jsonData.MTN = MTN ? MTN : jsonData.MTN;
-          jsonData.verify = (req.method == "GET") ? jsonData.verify : verify;
-          jsonData.minDepot = minDepot ? minDepot : jsonData.minDepot;
-          jsonData.OrangeTransactionIDLength = OrangeTransactionIDLength ? OrangeTransactionIDLength : jsonData.OrangeTransactionIDLength;
-          jsonData.MTNTransactionIDLength = MTNTransactionIDLength ? MTNTransactionIDLength  : jsonData.MTNTransactionIDLength;
-          jsonData.pays = pays ? pays : jsonData.pays;
-          jsonData.info = info ? info : jsonData.info;
-          jsonData.infoPack = infoPack ? infoPack : jsonData.infoPack;
-          
-          jsonData.mail = mail ? mail : jsonData.mail;
-          jsonData.tel = tel ? tel:jsonData.tel;
-          jsonData.textWhatsapp = textWhatsapp ? textWhatsapp:jsonData.textWhatsapp;
+            return res
+                .status(200)
+                .json([{ result: "requete executee", option: jsonData }]);
+
+          }
       
-          fs.writeFileSync(filepath, JSON.stringify(jsonData, null, 2), "utf-8");
-          
-          return res
-            .status(200)
-            .json([{ result: "requete executee", option: jsonData }]);
+         
         } catch (error) {
           return res.status(400).json([{ message: error.message }]);
         }
