@@ -232,10 +232,11 @@ const TransactionController = {
                 .status(200)
                 .json([{ option: jsonData }]);
           }else{
-            fs.writeFileSync(filepath, JSON.stringify(req.body, null, 2), "utf-8");
+            Object.assign(jsonData, req.body);
+            fs.writeFileSync(filepath, JSON.stringify(jsonData, null, 2), "utf-8");
             return res
                 .status(200)
-                .json([{ result: "requete executee", option: req.body }]);
+                .json([{ result: "requete executee", option: jsonData }]);
           }
       
          
