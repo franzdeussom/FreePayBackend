@@ -257,7 +257,7 @@ static async findByCodeParrainage(codeParrainage) {
 
   static async updateUserSoldeReduice(iduser, amountToReduice){
     const [rows] = await db.promise().query(
-      'UPDATE utilisateurs SET Solde_courant = (Solde_courant - ? * (-1)) WHERE ID_utilisateur = ?',
+      'UPDATE utilisateurs SET Solde_courant = ABS((Solde_courant - ?) * (-1)) WHERE ID_utilisateur = ?',
       [amountToReduice, iduser]
     );
 
