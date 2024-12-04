@@ -14,7 +14,7 @@
   "OrangeTransactionIDLength": 20,
   "MTNTransactionIDLength": 10,
   "pays": "con",
-  "info": "Executez le code et une fois le paiement effectué, veuillez saisir l'identifiant de la transaction reçu par SMS dans le champs approprié, sinon cela affectera votre recharge.",
+  "info": "Executez le code et une fois le paiement effectué, veuillez saisir l'identifiant de la transaction reçu par SMS dans le champs approprié, sinon cela affectera votre recharge. Ensuite confirmer le paiement en un click sur le bouton 'Confirmer...'",
   "infoPack": "Le prix des packages pourrait varier à chaque instant selon la tendance de variation des valeurs des cryptomonais pris en charges par nos IA pour la collecte des données. Les revenues quotidiens pourraient augmenter ou diminuer selon les variations, nous faisons le maximum pour conserver une certaine stabilité gràce a nos IA.",
   "htmlSalutation": "Hello",
   "htmlSalutation2": "<p>Vous avez demandé à réinitialiser votre mot de passe.</p> <p>Votre code de rénitialisation :",
