@@ -55,7 +55,7 @@ class Publication{
 
     static async getAllPublication(){
         const [result] = await db.promise().query(
-            'SELECT * FROM publications'
+            'SELECT * FROM publications ORDER BY id DESC'
         )
 
         return result ? [{data: result}]:[];

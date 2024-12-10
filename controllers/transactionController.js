@@ -183,13 +183,14 @@ const TransactionController = {
     },
 
     async echecsTransact(req, res){
+        //ecehc retrait
         try {
-            const {idTransaction, status, idUser, montant} = req.body;
+            const {idTransaction, status, idUser, montant, motif} = req.body;
              if(!idTransaction){
                 return res.status(400).json([{message: "ID non defini"}]);
              } 
             
-             const result = await Transaction.updateRetratState(idTransaction, status, idUser, montant);
+             const result = await Transaction.updateRetratState(idTransaction, status, idUser, montant, motif);
              if(result){
                 isPreventionSend = await User.setNewNotif(idUser, 1);
             }
@@ -202,12 +203,12 @@ const TransactionController = {
 
     async echecDepotTransaction(req, res){
         try {
-            const {idTransaction, idUser} = req.body;
+            const {idTransaction, idUser, montant, motif} = req.body;
              if(!idTransaction){
                 return res.status(400).json([{message: "ID non defini"}]);
              } 
             
-             const result = await Transaction.setTransactAsFailed(idTransaction, idUser);
+             const result = await Transaction.setTransactAsFailed(idTransaction, idUser, montant, motif);
              if(result){
                 isPreventionSend = await User.setNewNotif(idUser, 1);
             }

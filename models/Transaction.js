@@ -144,7 +144,7 @@ class Transaction{
             return rows.affectedRows == 1 ;
      }
 
-     static async updateRetratState(id, value, id_user, montant){
+     static async updateRetratState(id, value, id_user, montant, motif){
         const [rows] = await db.promise().query(
             'UPDATE transactions SET Statut_Transaction = ? WHERE ID_Transaction = ?',
             ['Echec', id]
@@ -153,7 +153,7 @@ class Transaction{
                         ID_Utilisateur : id_user,
                         Date_Transaction: helpers.getCurrentFormatedDate(),
                         Type_Notification: "Retrait",
-                        Contenu: "Votre demande de retrait à été approuvé et vos fonds ont été transféré à votre numero de Telephone d'inscription. Montant : " + montant + ' XAF',
+                        Contenu: "Votre demande de retrait à été ANNULEE par l'operateur. Montant : " + montant + ' XAF. Motif: ' + motif,
                         Lues: null
         });
 
@@ -161,7 +161,7 @@ class Transaction{
      }
 
 
-     static async setTransactAsFailed(id, id_user){
+     static async setTransactAsFailed(id, id_user, montant, motif){
         const [rows] = await db.promise().query(
             'UPDATE transactions SET Statut_Transaction = ? WHERE ID_Transaction = ?',
             ['Echec', id]
@@ -170,7 +170,7 @@ class Transaction{
                         ID_Utilisateur : id_user,
                         Date_Transaction: helpers.getCurrentFormatedDate(),
                         Type_Notification: "Dépot",
-                        Contenu: "Echec de Transaction.",
+                        Contenu: "Echec de Transaction, montant: " + montant + " XAF. Motif: " + motif,
                         Lues: null
         });
 

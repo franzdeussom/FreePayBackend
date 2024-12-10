@@ -31,9 +31,9 @@ router.post('/notification', authToken, notificationValidationRules(), Notificat
 
 router.get('/transaction-souscription/:id', authToken, userController.userTransactionAndSouscription);
 
-router.post('/transaction-echecs', authToken, transactionController.echecsTransact);
+router.post('/transaction-echecs', authToken, transactionController.echecsTransact); //retrait echec
 
-router.post('/transaction-depot-echec', authToken, transactionController.echecDepotTransaction);
+router.post('/transaction-depot-echec', authToken, transactionController.echecDepotTransaction); //depot eche
 
 router.get('/my-pub/:id', authToken, publicationController.getMyPub);
 

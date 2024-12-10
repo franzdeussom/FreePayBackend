@@ -248,7 +248,7 @@ static async findByCodeParrainage(codeParrainage) {
 
   static async addSolde(iduser, montant){
     const [rows] = await db.promise().query(
-      'UPDATE utilisateurs SET Solde_courant = Solde_courant + ?  WHERE ID_utilisateur = ?',
+      'UPDATE utilisateurs SET Solde_courant = ABS((Solde_courant + ?))  WHERE ID_utilisateur = ?',
       [montant, iduser]
     );
 
