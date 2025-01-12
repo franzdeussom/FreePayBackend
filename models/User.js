@@ -1,10 +1,8 @@
-
-const bcrypt = require('bcrypt');
-const db = require('../config/db'); // Importer la connexion à la base de données
+const bcrypt = require("bcrypt");
+const db = require("../config/db"); // Importer la connexion à la base de données
 
 // Définition de la classe User
 class User {
-
   constructor(
     ID_Utilisateur,
     Nom_Utilisateur,
@@ -19,7 +17,7 @@ class User {
     ID_Parrain,
     code_parrainage,
     new_notif,
-    derniere_connexion,
+    derniere_connexion
   ) {
     this.ID_Utilisateur = ID_Utilisateur;
     this.Nom_Utilisateur = Nom_Utilisateur;
@@ -34,7 +32,7 @@ class User {
     this.ID_Parrain = ID_Parrain;
     this.code_parrainage = code_parrainage;
     this.new_notif = new_notif;
-    this.derniere_connexion = derniere_connexion
+    this.derniere_connexion = derniere_connexion;
   }
 
   // Méthodes d'instance
@@ -44,13 +42,29 @@ class User {
       // Hacher le mot de passe avant de l'enregistrer
       const Mot_De_Passe = await bcrypt.hash(user.Mot_De_Passe, 10);
       // Enregistrer l'utilisateur dans la base de données
-      const [rows] = await db.promise().query(
-        'INSERT INTO utilisateurs(Nom_Utilisateur, Prenom_Utilisateur, Date_Naissance, Email, Telephone, Mot_De_Passe, Solde_courant, solde_commsion, Role, ID_Parrain, code_parrainage, new_notif, derniere_connexion) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',
-          [user.Nom_Utilisateur, user.Prenom_Utilisateur, user.Date_Naissance, user.Email, user.Telephone, Mot_De_Passe, user.Solde_courant, user.solde_commsion, user.Role, user.ID_Parrain, user.code_parrainage, user.new_notif, user.derniere_connexion]
-      );
+      const [rows] = await db
+        .promise()
+        .query(
+          "INSERT INTO utilisateurs(Nom_Utilisateur, Prenom_Utilisateur, Date_Naissance, Email, Telephone, Mot_De_Passe, Solde_courant, solde_commsion, Role, ID_Parrain, code_parrainage, new_notif, derniere_connexion) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+          [
+            user.Nom_Utilisateur,
+            user.Prenom_Utilisateur,
+            user.Date_Naissance,
+            user.Email,
+            user.Telephone,
+            Mot_De_Passe,
+            user.Solde_courant,
+            user.solde_commsion,
+            user.Role,
+            user.ID_Parrain,
+            user.code_parrainage,
+            user.new_notif,
+            user.derniere_connexion,
+          ]
+        );
 
       if (rows.affectedRows === 1) {
-        return [{insertID: rows.insertId, isDone: true}]; // Insertio réussie
+        return [{ insertID: rows.insertId, isDone: true }]; // Insertio réussie
       } else {
         return []; // Échec de l'insertion
       }
@@ -59,31 +73,32 @@ class User {
     }
   }
 
-
-  static async updatePassword(id, password){
-      try {
-        const [rows] = await db.promise().query(
-          'UPDATE utilisateurs SET Mot_De_Passe = ? WHERE ID_utilisateur = ?',
+  static async updatePassword(id, password) {
+    try {
+      const [rows] = await db
+        .promise()
+        .query(
+          "UPDATE utilisateurs SET Mot_De_Passe = ? WHERE ID_utilisateur = ?",
           [password, id]
         );
 
-        if (rows.affectedRows === 1) {
-          return true; // Insertio réussie
-        } else {
-          return false; // Échec de l'insertion
-        }
-      } catch (error) {
-        
+      if (rows.affectedRows === 1) {
+        return true; // Insertio réussie
+      } else {
+        return false; // Échec de l'insertion
       }
+    } catch (error) {}
   }
 
   async update() {
     try {
       // Mettre à jour l'utilisateur dans la base de données
-      const [rows] = await db.promise().query(
-        'UPDATE utilisateurs SET ? WHERE ID_Utilisateur = ?',
-        [this, this.ID_Utilisateur]
-      );
+      const [rows] = await db
+        .promise()
+        .query("UPDATE utilisateurs SET ? WHERE ID_Utilisateur = ?", [
+          this,
+          this.ID_Utilisateur,
+        ]);
 
       if (rows.affectedRows === 1) {
         return true; // Mise à jour réussie
@@ -98,10 +113,11 @@ class User {
 
   async delete() {
     try {
-      const [rows] = await db.promise().query(
-        'DELETE FROM utilisateurs WHERE ID_Utilisateur = ?',
-        [this.ID_Utilisateur]
-      );
+      const [rows] = await db
+        .promise()
+        .query("DELETE FROM utilisateurs WHERE ID_Utilisateur = ?", [
+          this.ID_Utilisateur,
+        ]);
 
       if (rows.affectedRows === 1) {
         return true; // Suppression réussie
@@ -114,33 +130,37 @@ class User {
     }
   }
 
- static async comparePassword(password, passewordHashed) {
-   return await bcrypt.compare(password, passewordHashed); // Compare le mot de passe avec le hachage
+  static async comparePassword(password, passewordHashed) {
+    return await bcrypt.compare(password, passewordHashed); // Compare le mot de passe avec le hachage
     //return password == passewordHashed;
   }
 
-  
-// Fonction pour rechercher un utilisateur par son code de parrainage
-static async findByCodeParrainage(codeParrainage) {
-  try {
-    const [rows] = await db.promise().query('SELECT * FROM utilisateurs WHERE code_parrainage = ?', [codeParrainage]);
-    return rows.length > 0 ? rows : []; // Renvoyer l'utilisateur si trouvé, sinon null
-  } catch (error) {
-    console.error('Erreur:', error);
-    throw error; 
+  // Fonction pour rechercher un utilisateur par son code de parrainage
+  static async findByCodeParrainage(codeParrainage) {
+    try {
+      const [rows] = await db
+        .promise()
+        .query("SELECT * FROM utilisateurs WHERE code_parrainage = ?", [
+          codeParrainage,
+        ]);
+      return rows.length > 0 ? rows : []; // Renvoyer l'utilisateur si trouvé, sinon null
+    } catch (error) {
+      console.error("Erreur:", error);
+      throw error;
+    }
   }
-}
 
   // Méthodes statiques pour interagir avec la base de données
 
   static async findByEmail(email, isLogin) {
     try {
-      if(!isLogin){
-        //connection with email or phone 
-        const [rows] = await db.promise().query(
-          'SELECT * FROM utilisateurs WHERE Email = ?',
-          [String(email).toLowerCase()]
-        );
+      if (!isLogin) {
+        //connection with email or phone
+        const [rows] = await db
+          .promise()
+          .query("SELECT * FROM utilisateurs WHERE Email = ?", [
+            String(email).toLowerCase(),
+          ]);
         if (rows.length > 0) {
           // Créer un nouvel objet User à partir des données de la base de données
           return new User(
@@ -156,17 +176,19 @@ static async findByCodeParrainage(codeParrainage) {
             rows[0].Role,
             rows[0].ID_Parrain,
             rows[0].code_parrainage,
-            rows[0].new_notif == 0 ? false:true,
+            rows[0].new_notif == 0 ? false : true,
             rows[0].derniere_connexion
           );
         } else {
           return null; // Renvoie null si non trouvé
         }
-      }else{
-        const [rows] = await db.promise().query(
-          'SELECT * FROM utilisateurs WHERE Email = ? OR Telephone = ?',
-          [email, email]
-        );
+      } else {
+        const [rows] = await db
+          .promise()
+          .query(
+            "SELECT * FROM utilisateurs WHERE Email = ? OR Telephone = ?",
+            [email, email]
+          );
         if (rows.length > 0) {
           // Créer un nouvel objet User à partir des données de la base de données
           return new User(
@@ -182,134 +204,152 @@ static async findByCodeParrainage(codeParrainage) {
             rows[0].Role,
             rows[0].ID_Parrain,
             rows[0].code_parrainage,
-            rows[0].new_notif == 0 ? false:true,
+            rows[0].new_notif == 0 ? false : true,
             rows[0].derniere_connexion
           );
         } else {
           return null; // Renvoie null si non trouvé
         }
       }
-     
     } catch (error) {
       console.error(error);
       throw error;
     }
   }
 
-  static async findByPhone(tel){
-        const [rows] = await db.promise().query(
-          'SELECT * FROM utilisateurs WHERE Telephone = ? ',
-          [tel]
-        );
+  static async findByPhone(tel) {
+    const [rows] = await db
+      .promise()
+      .query("SELECT * FROM utilisateurs WHERE Telephone = ? ", [tel]);
 
-      return rows.length > 0 ? rows[0]: null;
+    return rows.length > 0 ? rows[0] : null;
   }
 
-  static async delete(id){
-      const [rows] = await db.promise().query(
-        'DELETE FROM utilisateurs WHERE ID_Utilisateur = ? ',
-        [id]
-      )
+  static async delete(id) {
+    const [rows] = await db
+      .promise()
+      .query("DELETE FROM utilisateurs WHERE ID_Utilisateur = ? ", [id]);
 
-      return rows.affectedRows == 1;
+    return rows.affectedRows == 1;
   }
 
-  static async all(offset){
-    const [rows] = await db.promise().query(
-      'SELECT * FROM utilisateurs ORDER BY Nom_Utilisateur ASC LIMIT 30 OFFSET ?', 
-      [offset]
-    );
-    
-    return rows.length > 0 ? rows:[];
+  static async all(offset) {
+    const [rows] = await db
+      .promise()
+      .query(
+        "SELECT * FROM utilisateurs ORDER BY Nom_Utilisateur ASC LIMIT 30 OFFSET ?",
+        [offset]
+      );
+
+    return rows.length > 0 ? rows : [];
   }
 
-  static async countUser(){
-    const [rows] = await db.promise().query('SELECT COUNT(*) as Limit_OFFSET FROM utilisateurs ');
-        
-    return rows.length > 0 ? rows[0].Limit_OFFSET:0;
+  static async countUser() {
+    const [rows] = await db
+      .promise()
+      .query("SELECT COUNT(*) as Limit_OFFSET FROM utilisateurs ");
+
+    return rows.length > 0 ? rows[0].Limit_OFFSET : 0;
   }
-  
-  static async updateLastConnexionDate(date, idUser){
-      const [rows] = await db.promise().query(
-        'UPDATE utilisateurs SET derniere_connexion = ? WHERE ID_Utilisateur = ?',
+
+  static async updateLastConnexionDate(date, idUser) {
+    const [rows] = await db
+      .promise()
+      .query(
+        "UPDATE utilisateurs SET derniere_connexion = ? WHERE ID_Utilisateur = ?",
         [date, idUser]
-      ) 
-      return rows.affectedRows == 1;
+      );
+    return rows.affectedRows == 1;
   }
 
- static async updateUserSolde(iduser, solde){
-      const [rows] = await db.promise().query(
-        'UPDATE utilisateurs SET Solde_courant = ? WHERE ID_utilisateur = ?',
+  static async updateUserSolde(iduser, solde) {
+    const [rows] = await db
+      .promise()
+      .query(
+        "UPDATE utilisateurs SET Solde_courant = ? WHERE ID_utilisateur = ?",
         [solde, iduser]
       );
 
-      return rows.affectedRows == 1 ? true:false; 
+    return rows.affectedRows == 1 ? true : false;
   }
 
-  static async addSolde(iduser, montant){
-    const [rows] = await db.promise().query(
-      'UPDATE utilisateurs SET Solde_courant = ABS((Solde_courant + ?))  WHERE ID_utilisateur = ?',
-      [montant, iduser]
-    );
-
-    return rows.affectedRows == 1 ? true:false; 
-  }
-
-  static async updateUserSoldeReduice(iduser, amountToReduice){
-    const [rows] = await db.promise().query(
-      'UPDATE utilisateurs SET Solde_courant = ABS((Solde_courant - ?) * (-1)) WHERE ID_utilisateur = ?',
-      [amountToReduice, iduser]
-    );
-
-    return rows.affectedRows == 1 ? true:false; 
-  }
-
-  static async updateUser(user){
-      const [rows] = await db.promise().query(
-        'UPDATE utilisateurs SET Nom_Utilisateur = ?, Prenom_Utilisateur = ?, Email = ?, Telephone = ? WHERE ID_Utilisateur = ?',
-        [user.Nom_Utilisateur, user.Prenom_Utilisateur, user.Email, user.Telephone, user.ID_Utilisateur]
-      );
-      return rows.affectedRows == 1;
-  }
-
-  static async setNewNotif(id_user, val){
-      const [rows] = await db.promise().query(
-        'UPDATE utilisateurs SET new_notif = ? WHERE ID_Utilisateur = ?',
-        [val, id_user]
+  static async addSolde(iduser, montant) {
+    const [rows] = await db
+      .promise()
+      .query(
+        "UPDATE utilisateurs SET Solde_courant = ABS((Solde_courant + ?))  WHERE ID_utilisateur = ?",
+        [montant, iduser]
       );
 
-      return rows.affectedRows == 1;
+    return rows.affectedRows == 1 ? true : false;
   }
 
-  static async findByID(id){
-    const [rows] = await db.promise().query(
-      'SELECT * FROM utilisateurs WHERE ID_Utilisateur = ?',
-      [id]
-    );
+  static async updateUserSoldeReduice(iduser, amountToReduice) {
+    const [rows] = await db
+      .promise()
+      .query(
+        "UPDATE utilisateurs SET Solde_courant = ABS((Solde_courant - ?) * (-1)) WHERE ID_utilisateur = ?",
+        [amountToReduice, iduser]
+      );
 
-    return rows.length > 0 ? rows:[];
+    return rows.affectedRows == 1 ? true : false;
+  }
+
+  static async updateUser(user) {
+    const [rows] = await db
+      .promise()
+      .query(
+        "UPDATE utilisateurs SET Nom_Utilisateur = ?, Prenom_Utilisateur = ?, Email = ?, Telephone = ? WHERE ID_Utilisateur = ?",
+        [
+          user.Nom_Utilisateur,
+          user.Prenom_Utilisateur,
+          user.Email,
+          user.Telephone,
+          user.ID_Utilisateur,
+        ]
+      );
+    return rows.affectedRows == 1;
+  }
+
+  static async setNewNotif(id_user, val) {
+    const [rows] = await db
+      .promise()
+      .query("UPDATE utilisateurs SET new_notif = ? WHERE ID_Utilisateur = ?", [
+        val,
+        id_user,
+      ]);
+
+    return rows.affectedRows == 1;
+  }
+
+  static async findByID(id) {
+    const [rows] = await db
+      .promise()
+      .query("SELECT * FROM utilisateurs WHERE ID_Utilisateur = ?", [id]);
+
+    return rows.length > 0 ? rows : [];
   }
 
   //admin Endpoint
-  static async changeUserRule(id, role){
-    const [result] = await db.promise().query(
-      'UPDATE utilisateurs SET role = ? WHERE ID_Utilisateur = ?',
-      [role, id]
-    );
+  static async changeUserRule(id, role) {
+    const [result] = await db
+      .promise()
+      .query("UPDATE utilisateurs SET role = ? WHERE ID_Utilisateur = ?", [
+        role,
+        id,
+      ]);
 
     return result.affectedRows == 1;
   }
 
   static async generateRandomCode(length) {
-    const characters = '0123456789';
-    let code = '';
+    const characters = "0123456789";
+    let code = "";
     for (let i = 0; i < length; i++) {
       code += characters.charAt(Math.floor(Math.random() * characters.length));
     }
     return code;
   }
-
-  
 }
 
 module.exports = User;
